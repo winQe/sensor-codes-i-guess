@@ -16,6 +16,7 @@
  int distanceR = 0, distanceL = 0, distanceT = 0;
  int shortDistance = 0;
  int detectsLine = 0;
+
  int sawBall = 0;
  int robot_start;
  int robot_end;
