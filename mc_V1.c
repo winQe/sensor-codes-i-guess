@@ -28,15 +28,15 @@ void move_forward(int time){
 	int timeSteps = 0;
 	while(True){
 	timeSteps++;
-    motor[rightWheel] = 50;
-    motor[leftWheel] = -50;
+    motor[rightWheel] = 92;
+    motor[leftWheel] = -110;
     delay(100);
     if(timeSteps>time*10){
     	break;
     }
   }
 }
-
+/*
 void move_backward(int time){
     int timeSteps = 0;
 	while(True){
@@ -171,11 +171,12 @@ void clockwise_circular_search(int scale, int tuneToCircle){
         if(ball_detected_handler(ball_detect())){collect_ball();break;};
     }
 }
+*/
  task main(){
     clearDebugStream();
-    move_forward(5);
-    move_backward(5);
-    move_right(2);
-    move_left(2);
-    stop_motion(5);
+    move_forward(60);
+    //move_backward(5);
+    //move_right(2);
+    //move_left(2);
+    //stop_motion(5);
  }
