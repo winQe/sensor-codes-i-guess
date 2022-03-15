@@ -3,6 +3,8 @@
 #pragma config(Sensor, in4,		 sharpTop,			 sensorAnalog)
 #pragma config(Sensor, in5,		 sharpLeft,			 sensorAnalog)
 #pragma config(Sensor, in7,		 reflective,		 sensorAnalog)
+#pragma config(Sensor, in8,    line_a,         sensorAnalog)
+#pragma config(Sensor, dgtl1,  line_d,         sensorDigitalIn)
 #pragma config(Sensor, dgtl11, limit_power,		 sensorDigitalIn)
 #pragma config(Motor,	 port2,	 rightWheel,		 tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,	 port3,	 leftWheel,		 tmotorVex393_MC29, openLoop, reversed)
@@ -24,12 +26,20 @@ int count;
 int ball_detected_code = 0;
 char state[50];
 
+void line_detected(){
+    bool line_detection = SensorValue[line_d];
+    return line_detection;
+}
+
 void move_forward(int time){
 	int timeSteps = 0;
 	while(True){
 	timeSteps++;
     motor[rightWheel] = 92;
     motor[leftWheel] = -110;
+    if line_detected(){
+        break;
+    }
     delay(100);
     if(timeSteps>time*10){
     	break;
