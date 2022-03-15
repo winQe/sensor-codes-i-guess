@@ -26,16 +26,36 @@ int distanceR = 0, distanceL = 0, distanceT = 0;
 int shortDistance = 0;
 int detectsLine = 0;
 int sawBall = 0;
-int robot_start;
-int robot_end;
-int count;
 int ball_detected_code = 0;
-char state[50];
 
-/*bool line_detected(){
-    bool line_detection = SensorValue[line_d];
-    return (line_detection);
-}*/
+// Compass mapping
+ /*
+ N E S W
+ 1 --> direction that the compass is pointing at (yes I flipped it)
+
+ North 1000 = 8
+ North-East 1100 = 12
+ East 0100 = 4
+ South-East 0110 = 6
+ South 0010 =  2
+ South-West 0011 = 3
+ West 0001 = 1
+ North-West 10001 = 9
+
+ North >=8
+ East >=4
+ South >=2
+ West >=1
+ */
+ int north[3] = {8,12,9};
+ int east[3] = {4,12,6};
+ int south[3] = {2,3,6};
+ int west[3] = {1,6,9};
+
+ // Convert digital compass reading into discrete integer value N E S W
+int read_compass(){
+	return !SensorValue[compassN] * 8 + !SensorValue[compassE] * 4 + !SensorValue[compassS] * 2 + !SensorValue[compassW] * 1;}
+
 void move_backward(int time)
 {
     int timeSteps = 0;
@@ -86,6 +106,18 @@ void move_right(int time)
             break;
         }
     }
+}
+
+//Orient to any direction (refer to compass mapping), turns right until correct direction
+void orient(int direction)
+{
+	while (true){
+	move_right(1);
+		if (read_compass() == direction) {
+			  motor[rightWheel] = 0;
+        motor[leftWheel] = 0;
+			break;}
+	}
 }
 
 /*
@@ -214,19 +246,9 @@ void clockwise_circular_search()
     }
 }
 
-void orientRobot()
-{
-    while ((SensorValue[compassS] != 0) && ((SensorValue[compassN] != 1) || (SensorValue[compassE] != 1) || (SensorValue[compassW] != 1)))
-    {
-        move_right(2);
-    }
-}
-
-
 task main()
 {
     clearDebugStream();
-    orientRobot();
     //move_right(10);
     //move_forward(60);
     //clockwise_circular_search();

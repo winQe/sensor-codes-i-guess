@@ -393,7 +393,7 @@ time
  }
 
  // Calibrate compass to create array with calibrated with position 0 starting
-from original reading
+//from original reading
  void calibrate_compass()
  {
  int pos = 0;
