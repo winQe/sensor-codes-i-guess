@@ -24,7 +24,7 @@
 #pragma DebuggerWindows("DebugStream")
 int distanceR = 0, distanceL = 0, distanceT = 0;
 int shortDistance = 0;
-int detectsLine = 0;
+// int detectsLine = 0;
 int sawBall = 0;
 int ball_detected_code = 0;
 
@@ -52,14 +52,46 @@ int ball_detected_code = 0;
  int south[3] = {2,3,6};
  int west[3] = {1,6,9};
 
+/* Struct to store if boundary line is detected and its direction
+detected
+1 = line detected
+0 = no boundary detected
+direction
+0 = any other direction
+1 = south line (aka the end of the arena)
+2 = north line (during deposition)
+*/
+
+typedef struct{
+int detected;
+int direction;
+} line;
+
  // Convert digital compass reading into discrete integer value N E S W
 int read_compass(){
 	return !SensorValue[compassN] * 8 + !SensorValue[compassE] * 4 + !SensorValue[compassS] * 2 + !SensorValue[compassW] * 1;}
 
+int check_south(int val){
+for(int i = 0; i < 3; i++){
+  if(south[i] == val) return 1;}
+  return 0;}
+
+int check_north(int val){
+for(int i = 0; i < 3; i++){
+  if(north[i] == val) return 1;}
+  return 0;}
+
+void detectsLine(line &boundary){
+    boundary.detected = SensorValue[line_d];
+    if (check_south(read_compass())) {boundary.direction=1;}
+  	else if (check_north(read_compass())) {boundary.direction=2;}
+    else boundary.direction=0;
+}
+
 void move_backward(int time)
 {
     int timeSteps = 0;
-    while (True)
+    while (true)
     {
         timeSteps++;
         motor[rightWheel] = -92;
@@ -74,7 +106,7 @@ void move_backward(int time)
 void move_forward(int time)
 {
     int timeSteps = 0;
-    while (True)
+    while (true)
     {
         timeSteps++;
         motor[rightWheel] = 92;
@@ -95,7 +127,7 @@ void move_forward(int time)
 void move_right(int time)
 {
     int timeSteps = 0;
-    while (True)
+    while (true)
     {
         timeSteps++;
         motor[rightWheel] = -50;
