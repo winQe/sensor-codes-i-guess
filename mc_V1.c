@@ -26,26 +26,52 @@ int count;
 int ball_detected_code = 0;
 char state[50];
 
-void line_detected(){
+/*bool line_detected(){
     bool line_detection = SensorValue[line_d];
-    return line_detection;
+    return (line_detection);
+}*/
+void move_backward(int time){
+	int timeSteps = 0;
+	while(True){
+	timeSteps++;
+    motor[rightWheel] = -92;
+    motor[leftWheel] = 110;
+    delay(50);
+    if(timeSteps>time*20){
+    	break;
+    }
+  }
 }
-
 void move_forward(int time){
 	int timeSteps = 0;
 	while(True){
 	timeSteps++;
     motor[rightWheel] = 92;
     motor[leftWheel] = -110;
-    if line_detected(){
-        break;
+    if (!SensorValue[line_d]){
+    	move_backward(2);
+      break;
     }
+    delay(50);
+    if(timeSteps>time*20){
+    	break;
+    }
+  }
+}
+
+void move_right(int time){
+    int timeSteps = 0;
+	while(True){
+	timeSteps++;
+    motor[rightWheel] = -50;
+    motor[leftWheel] = -50;
     delay(100);
     if(timeSteps>time*10){
     	break;
     }
   }
 }
+
 /*
 void move_backward(int time){
     int timeSteps = 0;
@@ -66,18 +92,6 @@ void stop_motion(int time){
     delay(time*1000);
 }
 
-void move_right(int time){
-    int timeSteps = 0;
-	while(True){
-	timeSteps++;
-    motor[rightWheel] = -50;
-    motor[leftWheel] = -50;
-    delay(100);
-    if(timeSteps>time*10){
-    	break;
-    }
-  }
-}
 
 void move_left(){
     int timeSteps = 0;
@@ -174,17 +188,18 @@ void eight_pattern_search(int scale){
         if(ball_detected_handler(ball_detect())){collect_ball();break;};
     }
 }
-
-void clockwise_circular_search(int scale, int tuneToCircle){
-    for(int i=0;i<=tuneToCircle;i++){
-        move_right(scale);
-        if(ball_detected_handler(ball_detect())){collect_ball();break;};
+*/
+void clockwise_circular_search(){//int scale, int tuneToCircle){
+    for(int i=0;i<=1;i++){
+        move_right(5);
+        //if(ball_detected_handler(ball_detect())){collect_ball();break;};
     }
 }
-*/
+
  task main(){
     clearDebugStream();
-    move_forward(60);
+    //move_forward(60);
+    clockwise_circular_search();
     //move_backward(5);
     //move_right(2);
     //move_left(2);
