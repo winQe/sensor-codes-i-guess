@@ -39,6 +39,6 @@ Serial.print("Analog value : ");
 Serial.println(value_A0); 
 Serial.print("Digital value : "); 
 Serial.println(value_D0);  
-delay(1000); 
+delay(100); 
 
 } 
