@@ -77,7 +77,7 @@ valueReflectFrontRight=0;
  W E
  S
  Direction I/O Read(value1,value2,value3,value4) Decimal Form
- North 1110
+ North 1110 
 
  North-East 1100
 
@@ -91,7 +91,7 @@ valueReflectFrontRight=0;
 
  West 0111
 
- North-West 0110
+ North-West 0110 
 
  */
 
@@ -393,7 +393,7 @@ time
  }
 
  // Calibrate compass to create array with calibrated with position 0 starting
-//from original reading
+// from original reading
  void calibrate_compass()
  {
  int pos = 0;

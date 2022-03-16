@@ -62,10 +62,11 @@ direction
 2 = north line (during deposition)
 */
 
-typedef struct{
+/*typedef struct{
 int detected;
 int direction;
-} line;
+} line;*/
+
 
  // Convert digital compass reading into discrete integer value N E S W
 int read_compass(){
@@ -81,11 +82,28 @@ for(int i = 0; i < 3; i++){
   if(north[i] == val) return 1;}
   return 0;}
 
-void detectsLine(line &boundary){
+/*void detectsLine(line &boundary){
     boundary.detected = SensorValue[line_d];
     if (check_south(read_compass())) {boundary.direction=1;}
   	else if (check_north(read_compass())) {boundary.direction=2;}
     else boundary.direction=0;
+}*/
+
+
+// Function to detect line and which line it is
+/* Doesn't detect line return 0
+    Detects south line return 1
+    Detects north line return 2
+    Detect East line return 3
+    Detects West line return 4 */
+int detectsLine(){
+	if (SensorValue[line_d] == 1){
+		if (check_south(read_compass())) return 1;
+        else if (check_north(read_compass())) return 2;
+        else if (read_compass()==4) return 3;
+        else if (read_compass()==1) return 4;
+      }
+   return 0;
 }
 
 void move_backward(int time)
