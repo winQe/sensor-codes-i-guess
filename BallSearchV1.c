@@ -30,7 +30,24 @@ char state[50];
     bool line_detection = SensorValue[line_d];
     return (line_detection);
 }*/
-void move_backward(int time)
+int *get_distance()
+{
+    distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
+    distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
+    //distanceT = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
+
+    shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
+
+    int distVals[3];
+    distVals[0] = distanceL;
+    distVals[1] = distanceR;
+   // distVals[2] = distanceT;
+    distVals[2] = shortDistance;
+
+    return distVals;
+}
+
+/*void move_backward(int time)
 {
     int timeSteps = 0;
     while (True)
@@ -45,19 +62,20 @@ void move_backward(int time)
         }
     }
 }
+*/
 void move_forward(int time)
 {
     int timeSteps = 0;
     while (True)
     {
         timeSteps++;
-        motor[rightWheel] = 92;
-        motor[leftWheel] = -110;
-        if (!SensorValue[line_d])
+        motor[rightWheel] = -92;
+        motor[leftWheel] = 110;
+       /* if (!SensorValue[line_d])
         {
             move_backward(2);
             break;
-        }
+        }*/
         delay(50);
         if (timeSteps > time * 20)
         {
@@ -84,12 +102,13 @@ void move_right(int time)
 
 bool sensorDetect()
 {
-    int ballDist[4];
+    int ballDist[3];
     ballDist = get_distance();
-    if ((ballDist[1] < 80) && (ballDist[1] > 10))
+    if ((ballDist[1] < 20) && (ballDist[1] > 10))
     {
         return true;
     }
+    return false;
 }
 
 bool clockwise_circular_search()
@@ -110,7 +129,7 @@ bool clockwise_circular_search()
 
 void detectBall()
 {
-    for (int i = 0; i <= 1; i++)
+    for (int i = 0; i <= 5; i++)
     {
         move_forward(2); //move forward
         bool ballDetected = clockwise_circular_search();
@@ -123,28 +142,14 @@ void detectBall()
     }
 }
 
-int *get_distance()
-{
-    distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
-    distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
-    distanceT = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
 
-    shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
-
-    int distVals[4];
-    distVals[0] = distanceL;
-    distVals[1] = distanceR;
-    distVals[2] = distanceT;
-    distVals[3] = shortDistance;
-
-    return distVals;
-}
 
 task main()
 {
     clearDebugStream();
+    detectBall();
     //move_forward(60);
-    clockwise_circular_search();
+    //clockwise_circular_search();
     //move_backward(5);
     //move_right(2);
     //move_left(2);
