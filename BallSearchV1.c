@@ -20,27 +20,53 @@ int distanceR = 0, distanceL = 0, distanceT = 0;
 int shortDistance = 0;
 int detectsLine = 0;
 int sawBall = 0;
-int robot_start;
-int robot_end;
-int count;
 int ball_detected_code = 0;
-char state[50];
+
+int avgL;
+int avgR;
+int avgShort;
 
 
 int *get_distance()
 {
-    distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
-    distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
-    //distanceT = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
+		int numberOfReadingsToAverage = 20;
+		int totalL = 0;
+		int totalR = 0;
+		int totalShort = 0;
 
-    shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
+		for (int i =0; i< numberOfReadingsToAverage; i++){
 
-    int distVals[3];
-    distVals[0] = distanceL;
-    distVals[1] = distanceR;
-   // distVals[2] = distanceT;
-    distVals[2] = shortDistance;
+	    distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
+	    if (distanceL<10){
+	    	distanceL = 10;
+	    }
+	    if (distanceL>80){
+	    	distanceL = 80;
+	    }
 
+	    totalL = totalL + distanceL;
+	    distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
+	    if (distanceR<10){
+	    	distanceR = 10;
+	    }
+	    if (distanceR>80){
+	    	distanceR = 80;
+	    }
+	    totalR = totalR + distanceR;
+	    //distanceT = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
+
+	    shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
+	    totalShort = totalShort + shortDistance;
+	  }
+
+	    int distVals[3];
+	    distVals[0] = totalL / numberOfReadingsToAverage;
+	    distVals[1] = totalR / numberOfReadingsToAverage;
+	   // distVals[2] = distanceT;
+	    distVals[2] = totalShort / numberOfReadingsToAverage;
+			avgL = distVals[0];
+			avgR = distVals[1];
+			avgShort = distVals[2];
     return distVals;
 }
 
@@ -79,7 +105,7 @@ bool sensorDetect()
 {
     int ballDist[3];
     ballDist = get_distance();
-    if ((ballDist[1] < 20) && (ballDist[1] > 10))
+    if ((ballDist[1] < 40) && (ballDist[1] > 10))
     {
         return true;
     }
@@ -104,17 +130,25 @@ void detectBall()
 {
 
 	move_forward(1000);
+
 	while (true){
-		bool ballDetected = clockwise_circular_search(5000);
+		bool ballDetected = clockwise_circular_search(50000);
 		if (ballDetected){
-			move_forward(100);
-			move_back(100);
+			sawBall = 1;
+		}
+		/*
+		if (ballDetected){
+			sawBall=1;
+			move_forward(1000);
+			move_back(1000);
 			move_forward(100);
 			move_back(100);
 			move_forward(100);
 			move_back(100);
 			break;
 		}
+		*/
+
 	}
 
 
