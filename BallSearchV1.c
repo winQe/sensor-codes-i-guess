@@ -90,13 +90,15 @@ void move_right(int time)
     while (True)
     {
         timeSteps++;
-        motor[rightWheel] = -50;
-        motor[leftWheel] = -50;
+        motor[rightWheel] = -30;
+        motor[leftWheel] = -30;
         delay(100);
-        if (timeSteps > time * 10)
+       
+        if (timeSteps > time)
         {
             break;
         }
+       
     }
 }
 
@@ -113,7 +115,7 @@ bool sensorDetect()
 
 bool clockwise_circular_search()
 { //int scale, int tuneToCircle){
-    for (int i = 0; i <= 1; i++)
+    for (int i = 0; i <= 10; i++)
     {
         move_right(1);
         //if(ball_detected_handler(ball_detect())){collect_ball();break;}; return true

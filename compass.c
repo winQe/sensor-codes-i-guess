@@ -27,6 +27,7 @@ int shortDistance = 0;
 // int detectsLine = 0;
 int sawBall = 0;
 int ball_detected_code = 0;
+int done = 0;
 
 // Compass mapping
  /*
@@ -164,8 +165,7 @@ void orient(int direction)
 	while (true){
 	move_right(1);
 		if (read_compass() == direction) {
-			  motor[rightWheel] = 0;
-        motor[leftWheel] = 0;
+      move_forward(2);
 			break;}
 	}
 }
@@ -299,6 +299,7 @@ void clockwise_circular_search()
 task main()
 {
     clearDebugStream();
+    orient(1);
     //move_right(10);
     //move_forward(60);
     //clockwise_circular_search();
