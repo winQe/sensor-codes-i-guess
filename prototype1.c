@@ -93,11 +93,11 @@ while(true){
 			motor[rightWheel] = 1270;
 		strcpy(state, "reverse and move");
 
-			delay(5);
+			delay(60);
 			//move straight
 			motor[leftWheel] = 1270;
 			motor[rightWheel] = -1270;
-		delay(100);
+		delay(400);
 			sawBall = 1;
 	}
 	if (((distanceT - shortDistance)>25)){
@@ -109,12 +109,12 @@ while(true){
 		//reverse rotation
 		motor[leftWheel] = -1270;
 		motor[rightWheel] = -1270;
-		delay(15);
+		delay(20);
 		//move straight
 		motor[leftWheel] = 1270;
 		motor[rightWheel] = -1270;
 		strcpy(state, "keep turning and move");
-		delay(100);
+		delay(400);
 	}
 	else{
 		//just keep rotating
@@ -122,10 +122,11 @@ while(true){
 			motor[leftWheel] = 1270;
 			motor[rightWheel] = 1270;
 		strcpy(state, "keep rotating");
+		delay(30);
 		}
 	}
 	count +=1;
-	delay(5);
+	delay(1);
 
 }
 }

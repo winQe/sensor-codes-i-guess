@@ -26,10 +26,7 @@ int count;
 int ball_detected_code = 0;
 char state[50];
 
-/*bool line_detected(){
-    bool line_detection = SensorValue[line_d];
-    return (line_detection);
-}*/
+
 int *get_distance()
 {
     distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
@@ -47,58 +44,34 @@ int *get_distance()
     return distVals;
 }
 
-/*void move_backward(int time)
+void move_forward(int milliSecond)
 {
-    int timeSteps = 0;
-    while (True)
+	clearTimer(T1);
+
+    while (time1(T1)<milliSecond)
     {
-        timeSteps++;
         motor[rightWheel] = -92;
         motor[leftWheel] = 110;
-        delay(50);
-        if (timeSteps > time * 20)
-        {
-            break;
-        }
     }
 }
-*/
-void move_forward(int time)
+void move_back(int milliSecond)
 {
-    int timeSteps = 0;
-    while (True)
+	clearTimer(T1);
+
+    while (time1(T1)<milliSecond)
     {
-        timeSteps++;
-        motor[rightWheel] = -92;
-        motor[leftWheel] = 110;
-       /* if (!SensorValue[line_d])
-        {
-            move_backward(2);
-            break;
-        }*/
-        delay(50);
-        if (timeSteps > time * 20)
-        {
-            break;
-        }
+        motor[rightWheel] = 92;
+        motor[leftWheel] = -110;
     }
 }
 
-void move_right(int time)
+void move_right(int milliSecond)
 {
-    int timeSteps = 0;
-    while (True)
+	clearTimer(T1);
+    while (time1(T1)<milliSecond)
     {
-        timeSteps++;
         motor[rightWheel] = -30;
         motor[leftWheel] = -30;
-        delay(100);
-       
-        if (timeSteps > time)
-        {
-            break;
-        }
-       
     }
 }
 
@@ -113,24 +86,39 @@ bool sensorDetect()
     return false;
 }
 
-bool clockwise_circular_search()
-{ //int scale, int tuneToCircle){
-    for (int i = 0; i <= 10; i++)
-    {
-        move_right(1);
-        //if(ball_detected_handler(ball_detect())){collect_ball();break;}; return true
-        bool checkBall = sensorDetect();
-        if (checkBall)
-        {
-            return true;
-        }
-    }
+bool clockwise_circular_search(int milliSecond)
+{
+	clearTimer(T1);
+  while(time1(T1)< milliSecond){
+	  move_right(5);
+	  if (sensorDetect())
+	  	{
+	  		return true;
+	  	}
+	  }
 
     return false;
 }
 
 void detectBall()
 {
+
+	move_forward(1000);
+	while (true){
+		bool ballDetected = clockwise_circular_search(5000);
+		if (ballDetected){
+			move_forward(100);
+			move_back(100);
+			move_forward(100);
+			move_back(100);
+			move_forward(100);
+			move_back(100);
+			break;
+		}
+	}
+
+
+	/*
     for (int i = 0; i <= 5; i++)
     {
         move_forward(2); //move forward
@@ -142,6 +130,7 @@ void detectBall()
         }
         //if(ball_detected_handler(ball_detect())){collect_ball();break;};
     }
+    */
 }
 
 
