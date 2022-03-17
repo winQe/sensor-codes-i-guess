@@ -29,7 +29,7 @@ int avgShort;
 
 int *get_distance()
 {
-		int numberOfReadingsToAverage = 20;
+		int numberOfReadingsToAverage = 200;
 		int totalL = 0;
 		int totalR = 0;
 		int totalShort = 0;
@@ -105,7 +105,8 @@ bool sensorDetect()
 {
     int ballDist[3];
     ballDist = get_distance();
-    if ((ballDist[1] < 40) && (ballDist[1] > 10))
+    //changing this to avgR instead
+    if ((avgR < 40) && (avgR > 10))
     {
         return true;
     }
@@ -116,14 +117,18 @@ bool clockwise_circular_search(int milliSecond)
 {
 	clearTimer(T1);
   while(time1(T1)< milliSecond){
-	  move_right(5);
+  	//rotates right for 5ms
+	  move_right(5000);
+	  //and pause to scan
 	  if (sensorDetect())
 	  	{
 	  		return true;
+	  		//break and return true if sees something
 	  	}
 	  }
 
     return false;
+    //else return false at end of sweep time
 }
 
 void detectBall()
@@ -132,9 +137,12 @@ void detectBall()
 	move_forward(1000);
 
 	while (true){
+		sawBall=0;
+
 		bool ballDetected = clockwise_circular_search(50000);
 		if (ballDetected){
 			sawBall = 1;
+			//delay(10000);
 		}
 		/*
 		if (ballDetected){
