@@ -29,17 +29,35 @@ char state[50];
 
 int *get_distance()
 {
-    distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
-    distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
-    //distanceT = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
+		int numberOfReadingsToAverage = 200;
+		int totalL = 0;
+		int totalR = 0;
+		int totalShort = 0;
 
-    shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
+		for (int i =0; i< numberOfReadingsToAverage; i++){
 
-    int distVals[3];
-    distVals[0] = distanceL;
-    distVals[1] = distanceR;
-   // distVals[2] = distanceT;
-    distVals[2] = shortDistance;
+	    distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
+	    if (distanceL<10){
+	    	distanceL = 10;
+	    }
+	    if (distanceL>80){
+	    	distanceL = 80;
+	    }
+
+	    totalL = totalL + distanceL;
+	    distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
+	    if (distanceR<10){
+	    	distanceR = 10;
+	    }
+	    if (distanceR>80){
+	    	distanceR = 80;
+	    }
+	    totalR = totalR + distanceR;
+	    //distanceT = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
+
+	    shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
+	    totalShort = totalShort + shortDistance;
+	  }
 
     return distVals;
 }
@@ -79,8 +97,8 @@ bool sensorDetect()
 {
     int ballDist[3];
     ballDist = get_distance();
-    bool is_sensor_detecting;
-    if ((ballDist[1] < 20) && (ballDist[1] > 10))
+    //changing this to avgR instead
+    if ((avgR < 40) && (avgR > 10))
     {
         is_sensor_detecting = true;
         return true;
@@ -93,15 +111,18 @@ bool clockwise_circular_search(int milliSecond)
 {
 	clearTimer(T1);
   while(time1(T1)< milliSecond){
-	  move_right(5);
-      bool sensorVal = sensorDetect()
-	  if (sensorVal)
+  	//rotates right for 5ms
+	  move_right(5000);
+	  //and pause to scan
+	  if (sensorDetect())
 	  	{
 	  		return true;
+	  		//break and return true if sees something
 	  	}
 	  }
 
     return false;
+    //else return false at end of sweep time
 }
 
 void detectBall()
@@ -109,7 +130,14 @@ void detectBall()
 
 	move_forward(1000);
 	while (true){
-		bool ballDetected = clockwise_circular_search(5000);
+		sawBall=0;
+
+		bool ballDetected = clockwise_circular_search(50000);
+		if (ballDetected){
+			sawBall = 1;
+			//delay(10000);
+		}
+		/*
 		if (ballDetected){
 			move_forward(100);
 			move_back(100);

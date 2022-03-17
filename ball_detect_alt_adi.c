@@ -21,7 +21,7 @@
 int distanceR = 0, distanceL = 0, distanceT = 0;
 int * currDists[3];
 
-right_step_move(time){
+void right_step_move(int time){
     int timeSteps = 0;
 	while(true){
 	timeSteps++;
