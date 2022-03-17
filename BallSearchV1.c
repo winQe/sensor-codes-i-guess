@@ -79,10 +79,13 @@ bool sensorDetect()
 {
     int ballDist[3];
     ballDist = get_distance();
+    bool is_sensor_detecting;
     if ((ballDist[1] < 20) && (ballDist[1] > 10))
     {
+        is_sensor_detecting = true;
         return true;
     }
+    is_sensor_detecting = false;
     return false;
 }
 
@@ -91,7 +94,8 @@ bool clockwise_circular_search(int milliSecond)
 	clearTimer(T1);
   while(time1(T1)< milliSecond){
 	  move_right(5);
-	  if (sensorDetect())
+      bool sensorVal = sensorDetect()
+	  if (sensorVal)
 	  	{
 	  		return true;
 	  	}
