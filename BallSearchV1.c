@@ -27,14 +27,14 @@ int ball_detected_code = 0;
 char state[50];
 
 
-int *get_distance()
+int get_distance()
 {
-		int numberOfReadingsToAverage = 200;
+		int numberOfReadingsToAverage = 50;
 		int totalL = 0;
 		int totalR = 0;
 		int totalShort = 0;
-
-		for (int i =0; i< numberOfReadingsToAverage; i++){
+		int avgR = 0;
+	for (int i =0; i< numberOfReadingsToAverage; i++){
 
 	    distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
 	    if (distanceL<10){
@@ -58,8 +58,9 @@ int *get_distance()
 	    shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
 	    totalShort = totalShort + shortDistance;
 	  }
-
-    return distVals;
+	
+    avgR = totalR/numberOfReadingsToAverage;
+    return avgR;
 }
 
 void move_forward(int milliSecond)
@@ -95,8 +96,8 @@ void move_right(int milliSecond)
 
 bool sensorDetect()
 {
-    int ballDist[3];
-    ballDist = get_distance();
+    int avgR;
+    avgR = get_distance();
     //changing this to avgR instead
     if ((avgR < 40) && (avgR > 10))
     {
