@@ -20,12 +20,9 @@ int distanceR = 0, distanceL = 0, distanceT = 0;
 int shortDistance = 0;
 int detectsLine = 0;
 int sawBall = 0;
-int robot_start;
-int robot_end;
-int count;
 int ball_detected_code = 0;
-char state[50];
-
+int avgR;
+int check_if_exit = 0;
 
 int get_distance()
 {
@@ -58,7 +55,7 @@ int get_distance()
 	    shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
 	    totalShort = totalShort + shortDistance;
 	  }
-	
+
     avgR = totalR/numberOfReadingsToAverage;
     return avgR;
 }
@@ -72,6 +69,8 @@ void move_forward(int milliSecond)
         motor[rightWheel] = -92;
         motor[leftWheel] = 110;
     }
+    motor[rightWheel] = 0;
+    motor[leftWheel] = 0;
 }
 void move_back(int milliSecond)
 {
@@ -82,6 +81,8 @@ void move_back(int milliSecond)
         motor[rightWheel] = 92;
         motor[leftWheel] = -110;
     }
+    motor[rightWheel] = 0;
+    motor[leftWheel] = 0;
 }
 
 void move_right(int milliSecond)
@@ -92,19 +93,19 @@ void move_right(int milliSecond)
         motor[rightWheel] = -30;
         motor[leftWheel] = -30;
     }
+    motor[rightWheel] = 0;
+    motor[leftWheel] = 0;
 }
 
 bool sensorDetect()
 {
-    int avgR;
+    //int avgR;
     avgR = get_distance();
     //changing this to avgR instead
     if ((avgR < 40) && (avgR > 10))
     {
-        is_sensor_detecting = true;
         return true;
     }
-    is_sensor_detecting = false;
     return false;
 }
 
@@ -112,8 +113,8 @@ bool clockwise_circular_search(int milliSecond)
 {
 	clearTimer(T1);
   while(time1(T1)< milliSecond){
-  	//rotates right for 5ms
-	  move_right(5000);
+  	//rotates right for 100ms
+	  move_right(100);
 	  //and pause to scan
 	  if (sensorDetect())
 	  	{
@@ -133,11 +134,14 @@ void detectBall()
 	while (true){
 		sawBall=0;
 
-		bool ballDetected = clockwise_circular_search(50000);
+	 	bool ballDetected = clockwise_circular_search(50000);
+		check_if_exit = 1;
 		if (ballDetected){
 			sawBall = 1;
+			break;
 			//delay(10000);
 		}
+	}
 		/*
 		if (ballDetected){
 			move_forward(100);
@@ -172,6 +176,7 @@ task main()
 {
     clearDebugStream();
     detectBall();
+    move_forward(2000);
     //move_forward(60);
     //clockwise_circular_search();
     //move_backward(5);
