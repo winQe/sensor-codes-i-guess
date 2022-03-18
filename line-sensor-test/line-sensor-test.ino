@@ -35,8 +35,8 @@ void loop() {
 value_A0 = analogRead(IN_A0); // reads the analog input from the IR distance sensor 
 value_D0 = digitalRead(IN_D0);// reads the digital input from the IR distance sensor 
 
-Serial.print("Analog value : ");  
-Serial.println(value_A0); 
+//Serial.print("Analog value : ");  
+//Serial.println(value_A0); 
 Serial.print("Digital value : "); 
 Serial.println(value_D0);  
 delay(100); 
