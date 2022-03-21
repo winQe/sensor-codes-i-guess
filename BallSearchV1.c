@@ -24,12 +24,14 @@
 #pragma DebuggerWindows("systemParameters")
 #pragma DebuggerWindows("Sensors")
 #pragma DebuggerWindows("DebugStream")
-int distanceR = 0, distanceL = 0, distanceT = 0;
+int _sensorDetect;
+int distanceR = 0, distanceL = 0, distanceTL = 0;
 int shortDistance = 0;
 int detectsLine = 0;
 int sawBall = 0;
 int ball_detected_code = 0;
-int avgR;
+int avgRglobal;
+int avgLglobal, avgTLglobal;
 int check_if_exit = 0;
 
 // Compass mapping
@@ -70,14 +72,11 @@ for(int i = 0; i < 3; i++){
   if(north[i] == val) return 1;}
   return 0;}
 
-
-int get_distance()
+int get_distanceL()
 {
-		int numberOfReadingsToAverage = 50;
+	int numberOfReadingsToAverage = 50;
 		int totalL = 0;
-		int totalR = 0;
-		int totalShort = 0;
-		int avgR = 0;
+		int avgL = 0;
 	for (int i =0; i< numberOfReadingsToAverage; i++){
 
 	    distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
@@ -87,9 +86,21 @@ int get_distance()
 	    if (distanceL>80){
 	    	distanceL = 80;
 	    }
-
 	    totalL = totalL + distanceL;
-	    distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
+	  }
+
+	    avgL = totalL/numberOfReadingsToAverage;
+    return avgL;
+}
+
+int get_distanceR()
+{
+	int numberOfReadingsToAverage = 50;
+		int totalR = 0;
+		int avgR = 0;
+	for (int i =0; i< numberOfReadingsToAverage; i++){
+
+	    distanceL = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
 	    if (distanceR<10){
 	    	distanceR = 10;
 	    }
@@ -97,15 +108,36 @@ int get_distance()
 	    	distanceR = 80;
 	    }
 	    totalR = totalR + distanceR;
-	    //distanceT = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
-
-	    shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
-	    totalShort = totalShort + shortDistance;
 	  }
 
-    avgR = totalR/numberOfReadingsToAverage;
+	    avgR = totalR/numberOfReadingsToAverage;
     return avgR;
 }
+
+int get_distanceTL()
+{
+	int numberOfReadingsToAverage = 50;
+		int totalTL = 0;
+		int avgTL = 0;
+	for (int i =0; i< numberOfReadingsToAverage; i++){
+
+	    distanceTL = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
+	    if (distanceTL<10){
+	    	distanceTL = 10;
+	    }
+	    if (distanceTL>80){
+	    	distanceTL = 80;
+	    }
+	    totalTL = totalTL + distanceTL;
+	  }
+
+	    avgTL = totalTL/numberOfReadingsToAverage;
+    return avgTL;
+}
+
+
+
+
 
 void move_forward(int milliSecond)
 {
@@ -155,36 +187,90 @@ void move_left(int milliSecond)
     motor[rightWheel] = 0;
     motor[leftWheel] = 0;
 }
-bool sensorDetect()
+int sensorDetect()
 {
-    //int avgR;
-    avgR = get_distance();
+		int returnVal=1000;
+    avgRglobal = get_distanceR();
+    avgLglobal = get_distanceL();
+    avgTLglobal = get_distanceTL();
     //changing this to avgR instead
-    if ((avgR < 40) && (avgR > 10))
+    if ((avgRglobal < 70) && (avgRglobal > 10))
     {
-        return true;
+        returnVal=returnVal+1;
     }
-    return false;
+    if((avgLglobal < 70) && (avgLglobal > 10)){
+   			returnVal=returnVal+100;
+  	}
+  	if((avgTLglobal < 70) && (avgTLglobal > 10)){
+  		returnVal=returnVal+10;
+  	}
+    return returnVal;
 }
 
-bool clockwise_circular_search(int milliSecond)
+bool clockwise_circular_search_right(int milliSecond)
 {
 	clearTimer(T1);
+
   while(time1(T1)< milliSecond){
+  	_sensorDetect = sensorDetect();
+  	if (_sensorDetect!=1000){
+  		writeDebugStreamLine("miss lee is the root of all our problems");
+  	}
+  	bool _tempReturn;
   	//rotates right for 100ms
 	  move_right(100);
 	  //and pause to scan
-	  if (sensorDetect())
+	  if (_sensorDetect==1000)
 	  	{
-	  		return true;
+	  		return false;
 	  		//break and return true if sees something
 	  	}
-	  }
+	  else if(_sensorDetect==1001){
+	  //detected with right sensor
+	  writeDebugStreamLine("RIGHT DETECTED");
+	  _tempReturn = clockwise_circular_search_right(2000);
+	  if(_tempReturn==true){
+	  	return true;
+	  	}
+	  //detect with right routine ends here
+	} else if(_sensorDetect==1100){
+		//detected with left
+		writeDebugStreamLine("LEFT DETECTED");
+		move_left(200);
+		move_forward(500);
+		return true;
+		//detect with left ends here
+	} else if (_sensorDetect==1010){
+	//only top sensor detects?
 
-    return false;
-    //else return false at end of sweep time
+	//detect with top handled
+	} else if(_sensorDetect==1101){
+	//left and right detect
+
+	//detect with l and r both done
+} else if(_sensorDetect==1110){
+	//detected with left bottom and top - robot detected
+
+	//detect robot handled
+} else if(_sensorDetect==1011){
+	//detected with right bottom and left top??
+
+	//lb and rt detect handle ends here
+} else if(_sensorDetect==1111){
+	//detect with all sensors
+
+	//detect with all sensors ends here
+} else if(_sensorDetect==1010){
+	//detect with only top sensor
+
+	//detect with only top sensor ended
 }
 
+
+    //else return false at end of sweep time
+}
+return false;
+}
 void orient(int direction)
 {
 	while (true){
@@ -199,11 +285,11 @@ void orient(int direction)
 void detectBall()
 {
 
-	move_forward(2000);
+//	move_forward(1000);
 	while (true){
 		sawBall=0;
 
-	 	bool ballDetected = clockwise_circular_search(50000);
+	 	bool ballDetected = clockwise_circular_search_right(50000);
 		check_if_exit = 1;
 		if (ballDetected){
 			sawBall = 1;
@@ -267,9 +353,10 @@ task line_detection(){
 task main()
 {
     clearDebugStream();
+    writeDebugStreamLine("STARTING ROBOT");
     startTask(line_detection);
-    //detectBall();
-    orient(2);
+    detectBall();
+    //orient(2);
     //move_forward(500000);
     //move_forward(60);
     //clockwise_circular_search();
