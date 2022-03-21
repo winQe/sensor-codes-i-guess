@@ -271,14 +271,56 @@ bool clockwise_circular_search_right(int milliSecond)
 }
 return false;
 }
-void orient(int direction)
+void orientNorth()
 {
-	while (true){
-	move_right(100);
-		if (read_compass() == direction) {
-      move_forward(1000);
-			break;}
-	}
+    int value = read_compass();
+    if (value != 8)
+    {
+        if ((value == 12) || (value == 4) || (value == 6) || (value == 2))
+        {
+            //turn right
+            while (value != 8)
+            {
+                move_right(100);
+                value = read_compass();
+            }
+        }
+        else
+        {
+            //turn left
+            while (value != 8)
+            {
+                move_left(100);
+                value = read_compass();
+            }
+        }
+    }
+}
+
+void orientSouth()
+{
+    int value = read_compass();
+    if (value != 2)
+    {
+        if ((value == 12) || (value == 4) || (value == 6) || (value == 8))
+        {
+            //turn right
+            while (value != 2)
+            {
+                move_right(100);
+                value = read_compass();
+            }
+        }
+        else
+        {
+            //turn left
+            while (value != 2)
+            {
+                move_left(100);
+                value = read_compass();
+            }
+        }
+    }
 }
 
 
