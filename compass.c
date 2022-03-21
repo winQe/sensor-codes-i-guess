@@ -187,6 +187,32 @@ void orientNorth()
     }
 }
 
+void orientSouth()
+{
+    int value = read_compass();
+    if (value != 2)
+    {
+        if ((value == 12) || (value == 4) || (value == 6) || (value == 8))
+        {
+            //turn right
+            while (value != 82
+            {
+                move_right(100);
+                value = read_compass();
+            }
+        }
+        else
+        {
+            //turn left
+            while (value != 2)
+            {
+                move_left(100);
+                value = read_compass();
+            }
+        }
+    }
+}
+		   
 task main()
 {
     clearDebugStream();
