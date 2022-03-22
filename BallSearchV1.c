@@ -34,6 +34,8 @@ int avgRglobal;
 int avgLglobal, avgTLglobal;
 int check_if_exit = 0;
 
+int numPivots = 0;
+
 // Compass mapping
  /*
  N E S W
@@ -240,7 +242,16 @@ bool clockwise_circular_search_right(int milliSecond)
 		move_forward(500);
 		return true;
 		//detect with left ends here
-	} else if (_sensorDetect==1010){
+	}
+	else if (_sensorDetect>=1100){
+		//if top detects, no matter what else, don't move towards it
+	
+	}
+	else if (_sensorDetect == 1011){
+		//if both L and R - check if it is deposition area (if compass is E or NE or N)
+		//if (read_compass() == 
+	}
+	else if (_sensorDetect==1010){
 	//only top sensor detects?
 
 	//detect with top handled
@@ -330,14 +341,36 @@ void detectBall()
 //	move_forward(1000);
 	while (true){
 		sawBall=0;
-
-	 	bool ballDetected = clockwise_circular_search_right(50000);
-		check_if_exit = 1;
-		if (ballDetected){
-			sawBall = 1;
-			move_right(500);
-			move_forward(1000);
-			break;
+		while (sawBall==0){
+			bool ballDetected = clockwise_circular_search_right(50000);
+			check_if_exit = 1;
+			if (ballDetected){
+				sawBall = 1;
+				move_right(500);
+				move_forward(1000);
+				break;
+			}
+			else {
+				//testing figure eight pattern
+				if ((numPivots == 0)){
+					//rotate right 45
+					move_right(100);
+				}
+				else if (numPivots%4 == 0){
+					//if multiple of 4 and not 0
+					//rotate right 90
+					move_right(200);
+				}
+				else{
+					//rotate left 90
+					move_left(200);
+				}
+				
+			}
+			//move foward and start scan
+			move_forward(2000);
+			numPivots++;
+			//loop back to top and start scan
 			//delay(10000);
 		}
 	}
