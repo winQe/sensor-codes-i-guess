@@ -102,7 +102,7 @@ int get_distanceR()
 		int avgR = 0;
 	for (int i =0; i< numberOfReadingsToAverage; i++){
 
-	    distanceL = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
+	   distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
 	    if (distanceR<10){
 	    	distanceR = 10;
 	    }
@@ -136,10 +136,6 @@ int get_distanceTL()
 	    avgTL = totalTL/numberOfReadingsToAverage;
     return avgTL;
 }
-
-
-
-
 
 void move_forward(int milliSecond)
 {
@@ -216,7 +212,7 @@ bool clockwise_circular_search_right(int milliSecond)
   while(time1(T1)< milliSecond){
   	_sensorDetect = sensorDetect();
   	if (_sensorDetect!=1000){
-  		writeDebugStreamLine("miss lee is the root of all our problems");
+  		writeDebugStreamLine("miss lee is the root of all our problems (SOMETHING IS DETECTING)");
   	}
   	bool _tempReturn;
   	//rotates right for 100ms
@@ -224,16 +220,19 @@ bool clockwise_circular_search_right(int milliSecond)
 	  //and pause to scan
 	  if (_sensorDetect==1000)
 	  	{
-	  		return false;
+	  		//return false;
 	  		//break and return true if sees something
 	  	}
 	  else if(_sensorDetect==1001){
 	  //detected with right sensor
 	  writeDebugStreamLine("RIGHT DETECTED");
-	  _tempReturn = clockwise_circular_search_right(2000);
+	  /*_tempReturn = clockwise_circular_search_right(2000);
 	  if(_tempReturn==true){
 	  	return true;
-	  	}
+	  	}*/
+	  move_right(100);
+	  move_forward(500);
+	  return true;
 	  //detect with right routine ends here
 	} else if(_sensorDetect==1100){
 		//detected with left
@@ -243,13 +242,13 @@ bool clockwise_circular_search_right(int milliSecond)
 		return true;
 		//detect with left ends here
 	}
-	else if (_sensorDetect>=1100){
-		//if top detects, no matter what else, don't move towards it
-	
-	}
+	// else if (_sensorDetect>=1100){
+	// 	//if top detects, no matter what else, don't move towards it
+
+	// }
 	else if (_sensorDetect == 1011){
 		//if both L and R - check if it is deposition area (if compass is E or NE or N)
-		//if (read_compass() == 
+		//if (read_compass() ==
 	}
 	else if (_sensorDetect==1010){
 	//only top sensor detects?
@@ -343,7 +342,7 @@ void detectBall()
 		sawBall=0;
 		while (sawBall==0){
 			bool ballDetected = clockwise_circular_search_right(50000);
-			check_if_exit = 1;
+			writeDebugStreamLine("EXITED OUT OF THE clockwise_circular_search_right");
 			if (ballDetected){
 				sawBall = 1;
 				move_right(500);
@@ -365,7 +364,7 @@ void detectBall()
 					//rotate left 90
 					move_left(200);
 				}
-				
+
 			}
 			//move foward and start scan
 			move_forward(2000);
