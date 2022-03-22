@@ -143,7 +143,7 @@ void move_forward(int milliSecond)
 
     while (time1(T1)<milliSecond)
     {
-        motor[rightWheel] = -92;
+        motor[rightWheel] = -120;
         motor[leftWheel] = 110;
     }
     motor[rightWheel] = 0;
@@ -167,8 +167,8 @@ void move_left(int milliSecond)
 	clearTimer(T1);
     while (time1(T1)<milliSecond)
     {
-        motor[rightWheel] = -50;
-        motor[leftWheel] = -50;
+        motor[rightWheel] = -70;
+        motor[leftWheel] = -70;
     }
     motor[rightWheel] = 0;
     motor[leftWheel] = 0;
@@ -179,8 +179,8 @@ void move_right(int milliSecond)
 	clearTimer(T1);
     while (time1(T1)<milliSecond)
     {
-        motor[rightWheel] = 30;
-        motor[leftWheel] = 30;
+        motor[rightWheel] = 50;
+        motor[leftWheel] = 50;
     }
     motor[rightWheel] = 0;
     motor[leftWheel] = 0;
@@ -406,34 +406,50 @@ task line_detection(){
     if (SensorValue[frontLeft]==0 && SensorValue[backLeft] ==0){
         hogCPU();
         writeDebugStreamLine("LEFT LINE DETECTED");
-        move_right(2000);
+        move_right(1000);
         releaseCPU();
     }
     if (SensorValue[frontRight]==0 && SensorValue[backRight] ==0){
         hogCPU();
         writeDebugStreamLine("RIGHT LINE DETECTED");
-        move_left(2000);
+        move_left(1000);
         releaseCPU();
     }
     else if (SensorValue[frontLeft]==0 || SensorValue[frontRight] == 0){
         hogCPU();
         writeDebugStreamLine("FRONT LINE DETECTED");
-    	move_back(2000);
+    	move_back(1000);
     	releaseCPU();}
     else if (SensorValue[backLeft]==0 || SensorValue[backRight]==0){
         hogCPU();
         writeDebugStreamLine("BACK LINE DETECTED");
-    	move_forward(2000);
+    	move_forward(1000);
     	releaseCPU();}
 	}
+}
+
+void diamond_path(){
+    move_right(200);
+    move_forward(2000);
+    move_right(2500);
+    move_left(400);
+    move_forward(2000);
+    move_right(2500);
+    move_left(600);
+    move_forward(2000);
+    move_right(2500);
+    move_left(400);
+    move_forward(2000);
 }
 
 task main()
 {
     clearDebugStream();
     writeDebugStreamLine("STARTING ROBOT");
-    //startTask(line_detection);
-    clockwise_circular_search_right(50000);
+    //move_right(2500);
+    startTask(line_detection);
+    diamond_path();
+    //clockwise_circular_search_right(50000);
     //detectBall();
     //orient(2);
     //move_forward(500000);
