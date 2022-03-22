@@ -162,7 +162,7 @@ void move_back(int milliSecond)
     motor[leftWheel] = 0;
 }
 
-void move_right(int milliSecond)
+void move_left(int milliSecond)
 {
 	clearTimer(T1);
     while (time1(T1)<milliSecond)
@@ -174,7 +174,7 @@ void move_right(int milliSecond)
     motor[leftWheel] = 0;
 }
 
-void move_left(int milliSecond)
+void move_right(int milliSecond)
 {
 	clearTimer(T1);
     while (time1(T1)<milliSecond)
@@ -216,7 +216,7 @@ bool clockwise_circular_search_right(int milliSecond)
   	}
   	bool _tempReturn;
   	//rotates right for 100ms
-	  move_right(100);
+	  move_right(60);
 	  //and pause to scan
 	  if (_sensorDetect==1000)
 	  	{
@@ -230,7 +230,7 @@ bool clockwise_circular_search_right(int milliSecond)
 	  if(_tempReturn==true){
 	  	return true;
 	  	}*/
-	  move_right(100);
+	  move_right(50);
 	  move_forward(500);
 	  return true;
 	  //detect with right routine ends here
@@ -405,20 +405,24 @@ task line_detection(){
 	while(true){
     if (SensorValue[frontLeft]==0 && SensorValue[backLeft] ==0){
         hogCPU();
+        writeDebugStreamLine("LEFT LINE DETECTED");
         move_right(2000);
         releaseCPU();
     }
     if (SensorValue[frontRight]==0 && SensorValue[backRight] ==0){
         hogCPU();
+        writeDebugStreamLine("RIGHT LINE DETECTED");
         move_left(2000);
         releaseCPU();
     }
-    else if (SensorValue[frontLeft]==0 || SensorValue[frontRight] == 0)
-    	{hogCPU();
+    else if (SensorValue[frontLeft]==0 || SensorValue[frontRight] == 0){
+        hogCPU();
+        writeDebugStreamLine("FRONT LINE DETECTED");
     	move_back(2000);
     	releaseCPU();}
-    else if (SensorValue[backLeft]==0 || SensorValue[backRight]==0)
-    	{hogCPU();
+    else if (SensorValue[backLeft]==0 || SensorValue[backRight]==0){
+        hogCPU();
+        writeDebugStreamLine("BACK LINE DETECTED");
     	move_forward(2000);
     	releaseCPU();}
 	}
@@ -428,8 +432,9 @@ task main()
 {
     clearDebugStream();
     writeDebugStreamLine("STARTING ROBOT");
-    startTask(line_detection);
-    detectBall();
+    //startTask(line_detection);
+    clockwise_circular_search_right(50000);
+    //detectBall();
     //orient(2);
     //move_forward(500000);
     //move_forward(60);
