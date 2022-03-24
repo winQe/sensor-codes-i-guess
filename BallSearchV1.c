@@ -2,8 +2,7 @@
 #pragma config(Sensor, in2,    sharpShort,     sensorAnalog)
 #pragma config(Sensor, in4,    sharpTop,       sensorAnalog)
 #pragma config(Sensor, in5,    sharpLeft,      sensorAnalog)
-#pragma config(Sensor, in6,    backLeftanal,   sensorAnalog)
-#pragma config(Sensor, in7,    reflective,     sensorAnalog)
+#pragma config(Sensor, in7,    backLeftanal,   sensorAnalog)
 #pragma config(Sensor, in8,    line_a,         sensorAnalog)
 #pragma config(Sensor, dgtl1,  backLeft,       sensorNone)
 #pragma config(Sensor, dgtl2,  frontLeft,      sensorDigitalIn)
@@ -139,7 +138,7 @@ int get_distanceTL()
     return avgTL;
 }
 
-void move_forward(int milliSecond)
+/*void move_forward(int milliSecond)
 {
 	clearTimer(T1);
 
@@ -150,7 +149,20 @@ void move_forward(int milliSecond)
     }
     motor[rightWheel] = 0;
     motor[leftWheel] = 0;
+}*/
+void move_forward(int milliSecond)
+{
+	clearTimer(T1);
+
+    while (time1(T1)<milliSecond)
+    {
+        motor[rightWheel] = -50;
+        motor[leftWheel] = 40;
+    }
+    motor[rightWheel] = 0;
+    motor[leftWheel] = 0;
 }
+
 void move_back(int milliSecond)
 {
 	clearTimer(T1);
@@ -429,62 +441,62 @@ void detectBall()
     }
     */
 }
-/*
-task line_detection(){
+
+/*task line_detection(){
 	while(true){
     if (SensorValue[frontLeft]==0 && SensorValue[backLeft] ==0){
         hogCPU();
-        writeDebugStreamLine("LEFT LINE DETECTED");
+        //writeDebugStreamLine("LEFT LINE DETECTED");
         move_right(1000);
         releaseCPU();
     }
     if (SensorValue[frontRight]==0 && SensorValue[backRight] ==0){
         hogCPU();
-        writeDebugStreamLine("RIGHT LINE DETECTED");
+        //writeDebugStreamLine("RIGHT LINE DETECTED");
         move_left(1000);
         releaseCPU();
     }
     else if (SensorValue[frontLeft]==0 || SensorValue[frontRight] == 0){
         hogCPU();
-        writeDebugStreamLine("FRONT LINE DETECTED");
+        //writeDebugStreamLine("FRONT LINE DETECTED");
     	move_back(1000);
     	releaseCPU();}
     else if (SensorValue[backLeft]==0 || SensorValue[backRight]==0){
         hogCPU();
-        writeDebugStreamLine("BACK LINE DETECTED");
+        //writeDebugStreamLine("BACK LINE DETECTED");
     	move_forward(1000);
     	releaseCPU();}
 	}
-}
-*/
+}*/
+
 
 task line_detection(){
 	int moveTime = 750;
 	while(true){
     if (SensorValue[frontLeft]==0){
         hogCPU();
-        writeDebugStreamLine("FRONT LEFT LINE DETECTED");
         move_bccw(moveTime);
         releaseCPU();
+        //writeDebugStreamLine("FRONT LEFT LINE DETECTED");
     }
     if (SensorValue[frontRight]==0){
         hogCPU();
-        writeDebugStreamLine("FRONT RIGHT LINE DETECTED");
         move_bccw(moveTime);
         releaseCPU();
-    }
-    if (SensorValue[backLeftanal]<=500){
+				//writeDebugStreamLine("FRONT RIGHT LINE DETECTED");
+        }
+    if (SensorValue[backLeftanal]<=1000){
         hogCPU();
-        writeDebugStreamLine("BACK LEFT LINE DETECTED %d",SensorValue[backLeftanal]);
         move_fcw(moveTime);
         releaseCPU();
-    }
+        //writeDebugStreamLine("BACK LEFT LINE DETECTED %d",SensorValue[backLeftanal]);
+        }
     if (SensorValue[backRight]==0){
         hogCPU();
-        writeDebugStreamLine("BACK RIGHT LINE DETECTED");
         move_fcw(moveTime);
         releaseCPU();
-    }
+ 				//writeDebugStreamLine("BACK RIGHT LINE DETECTED");
+        }
   }
 }
 
@@ -492,13 +504,13 @@ task line_detection(){
 void diamond_path(){
     move_right(400);
     move_forward(2000);
-    clockwise_circular_search_right(2500);
+    move_right(2500);
     move_left(400);
     move_forward(2000);
-    clockwise_circular_search_right(2500);
+    move_right(2500);
     move_left(600);
     move_forward(2000);
-    clockwise_circular_search_right(2500);
+    move_right(2500);
     move_left(400);
     move_forward(2000);
 }
@@ -510,7 +522,6 @@ task main()
     //move_bccw(1000);
     startTask(line_detection);
     diamond_path();
-    //move_back(500);
     //clockwise_circular_search_right(2500);
     //detectBall();
 }

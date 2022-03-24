@@ -21,6 +21,8 @@
  #pragma DebuggerWindows("Globals")
  #pragma DebuggerWindows("systemParameters")
  #pragma DebuggerWindows("Sensors")
+ #pragma DebuggerWindows("DebugStream")
+
  int distanceR = 0, distanceL = 0, distanceT = 0;
  int shortDistance = 0;
  int detectsLine = 0;
@@ -45,6 +47,9 @@ task main()
 		//writeDebugStreamLine("Distance in cm : %i", distance);
 
 		shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058)*1000 * 5/4;
+		if (SensorValue[frontLeft]==0) writeDebugStreamLine("Front Left Detected");
+				if (SensorValue[frontRight]==0) writeDebugStreamLine("Front RIGHT Detected");
+		if (SensorValue[backLeft] <=500) writeDebugStreamLine("Back LEFT VALUE DROPPED %d",SensorValue[backLeft]);
 		//writeDebugStreamLine("shortDistance in cm : %i", shortDistance);
 		//if(SensorValue[reflective]< 160){
 			//detectsLine = 1;
