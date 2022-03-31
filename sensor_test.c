@@ -1,10 +1,9 @@
-#pragma config(Sensor, in1,    sharpRight,     sensorAnalog)
+#pragma config(Sensor, in1,    sharpTop,       sensorAnalog)
 #pragma config(Sensor, in2,    sharpShort,     sensorAnalog)
-#pragma config(Sensor, in3,    sharpTop,       sensorAnalog)
+#pragma config(Sensor, in3,    sharpRight,     sensorAnalog)
 #pragma config(Sensor, in5,    sharpLeft,      sensorAnalog)
-#pragma config(Sensor, in7,    backLeft,       sensorAnalog)
 #pragma config(Sensor, in8,    line_a,         sensorAnalog)
-#pragma config(Sensor, dgtl1,  line_d,         sensorDigitalIn)
+#pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
 #pragma config(Sensor, dgtl2,  frontLeft,      sensorDigitalIn)
 #pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
 #pragma config(Sensor, dgtl4,  backRight,      sensorDigitalIn)
@@ -21,7 +20,7 @@
  #pragma DebuggerWindows("Globals")
  #pragma DebuggerWindows("systemParameters")
  #pragma DebuggerWindows("Sensors")
- #pragma DebuggerWindows("DebugStream")
+
 
  int distanceR = 0, distanceL = 0, distanceT = 0;
  int shortDistance = 0;
@@ -38,7 +37,7 @@ task main()
 	SensorValue[sharpShort] = 0;
 	SensorValue[line_a] = 0;
 	SensorValue[limitswitch] = 0;
-	SensorValue[line_d] = 0;
+//SensorValue[line_d] = 0;
 	while(1==1){
 
 		distanceR = 29.988 * pow(SensorValue[sharpRight],-1.173) *1000 * 5/2;
@@ -47,9 +46,9 @@ task main()
 		//writeDebugStreamLine("Distance in cm : %i", distance);
 
 		shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058)*1000 * 5/4;
-		if (SensorValue[frontLeft]==0) writeDebugStreamLine("Front Left Detected");
-				if (SensorValue[frontRight]==0) writeDebugStreamLine("Front RIGHT Detected");
-		if (SensorValue[backLeft] <=500) writeDebugStreamLine("Back LEFT VALUE DROPPED %d",SensorValue[backLeft]);
+	//	if (SensorValue[frontLeft]==0) writeDebugStreamLine("Front Left Detected");
+		//		if (SensorValue[frontRight]==0) writeDebugStreamLine("Front RIGHT Detected");
+		//if (SensorValue[backLeft] <=500) writeDebugStreamLine("Back LEFT VALUE DROPPED %d",SensorValue[backLeft]);
 		//writeDebugStreamLine("shortDistance in cm : %i", shortDistance);
 		//if(SensorValue[reflective]< 160){
 			//detectsLine = 1;
