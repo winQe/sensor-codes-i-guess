@@ -1,10 +1,8 @@
-#pragma config(Sensor, in1,    sharpRight,     sensorAnalog)
+#pragma config(Sensor, in1,    sharpTop,       sensorAnalog)
 #pragma config(Sensor, in2,    sharpShort,     sensorAnalog)
-#pragma config(Sensor, in4,    sharpTop,       sensorAnalog)
+#pragma config(Sensor, in3,    sharpRight,     sensorAnalog)
 #pragma config(Sensor, in5,    sharpLeft,      sensorAnalog)
-#pragma config(Sensor, in7,    backLeftanal,   sensorAnalog)
-#pragma config(Sensor, in8,    line_a,         sensorAnalog)
-#pragma config(Sensor, dgtl1,  backLeft,       sensorNone)
+#pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
 #pragma config(Sensor, dgtl2,  frontLeft,      sensorDigitalIn)
 #pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
 #pragma config(Sensor, dgtl4,  backRight,      sensorDigitalIn)
@@ -13,6 +11,7 @@
 #pragma config(Sensor, dgtl9,  compassS,       sensorDigitalIn)
 #pragma config(Sensor, dgtl10, compassW,       sensorDigitalIn)
 #pragma config(Sensor, dgtl11, limit_power,    sensorDigitalIn)
+#pragma config(Motor,  port1,           collectionMotor, tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           rightWheel,    tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port3,           leftWheel,     tmotorVex393_MC29, openLoop, reversed)
 
@@ -120,6 +119,22 @@ int get_distanceTL()
 	return avgTL;
 }
 
+
+void move_right(int milliSecond)
+{
+	clearTimer(T1);
+	while (time1(T1)<milliSecond)
+	{
+		motor[rightWheel] = 50;
+		motor[leftWheel] = 50;
+	}
+	motor[rightWheel] = 0;
+	motor[leftWheel] = 0;
+}
+
+
+/** move only (without collection) **/
+
 void move_forward(int milliSecond)
 {
 	clearTimer(T1);
@@ -132,6 +147,7 @@ void move_forward(int milliSecond)
 	motor[rightWheel] = 0;
 	motor[leftWheel] = 0;
 }
+
 
 void move_back(int milliSecond)
 {
@@ -146,6 +162,7 @@ void move_back(int milliSecond)
 	motor[leftWheel] = 0;
 }
 
+
 void move_left(int milliSecond)
 {
 	clearTimer(T1);
@@ -153,18 +170,6 @@ void move_left(int milliSecond)
 	{
 		motor[rightWheel] = -70;
 		motor[leftWheel] = -70;
-	}
-	motor[rightWheel] = 0;
-	motor[leftWheel] = 0;
-}
-
-void move_right(int milliSecond)
-{
-	clearTimer(T1);
-	while (time1(T1)<milliSecond)
-	{
-		motor[rightWheel] = 50;
-		motor[leftWheel] = 50;
 	}
 	motor[rightWheel] = 0;
 	motor[leftWheel] = 0;
@@ -183,12 +188,14 @@ void move_fcw(int milliSecond)
 	motor[leftWheel] = 0;
 }
 
+
 void move_fccw(int milliSecond)
 {
 	clearTimer(T1);
 
 	while (time1(T1)<milliSecond)
 	{
+
 		motor[rightWheel] = -50;
 		motor[leftWheel] = 127;
 	}
@@ -196,6 +203,7 @@ void move_fccw(int milliSecond)
 	motor[leftWheel] = 0;
 }
 
+// move bccw and bcw have no collection versions
 void move_bccw(int milliSecond)
 {
 	clearTimer(T1);
@@ -222,6 +230,110 @@ void move_bcw(int milliSecond)
 	motor[leftWheel] = 0;
 }
 
+
+/** move with collection **/
+
+void move_forward_with_collection(int milliSecond)
+{
+	clearTimer(T1);
+
+	while (time1(T1)<milliSecond)
+	{
+		motor[collectionMotor] = 100;
+		motor[rightWheel] = -120;
+		motor[leftWheel] = 110;
+	}
+	motor[collectionMotor] = 0;
+	motor[rightWheel] = 0;
+	motor[leftWheel] = 0;
+}
+
+
+void move_back_with_collection(int milliSecond)
+{
+	clearTimer(T1);
+
+	while (time1(T1)<milliSecond)
+	{
+		motor[collectionMotor] = 100;
+		motor[rightWheel] = 92;
+		motor[leftWheel] = -110;
+	}
+	motor[collectionMotor] = 0;
+	motor[rightWheel] = 0;
+	motor[leftWheel] = 0;
+}
+
+
+void move_left_with_collection(int milliSecond)
+{
+	clearTimer(T1);
+	while (time1(T1)<milliSecond)
+	{
+		motor[collectionMotor] = 100;
+		motor[rightWheel] = -70;
+		motor[leftWheel] = -70;
+	}
+	motor[collectionMotor] = 0;
+	motor[rightWheel] = 0;
+	motor[leftWheel] = 0;
+}
+
+
+void move_right_with_collection(int milliSecond)
+{
+	clearTimer(T1);
+	while (time1(T1)<milliSecond)
+	{
+		motor[collectionMotor] = 100;
+		motor[rightWheel] = 50;
+		motor[leftWheel] = 50;
+	}
+	motor[collectionMotor] = 0;
+	motor[rightWheel] = 0;
+	motor[leftWheel] = 0;
+}
+
+void move_fcw_with_collection(int milliSecond)
+{
+	clearTimer(T1);
+
+	while (time1(T1)<milliSecond)
+	{
+		motor[collectionMotor] = 100;
+		motor[rightWheel] = -50;
+		motor[leftWheel] = 127;
+	}
+	motor[collectionMotor] = 0;
+	motor[rightWheel] = 0;
+	motor[leftWheel] = 0;
+}
+
+
+void move_fccw_with_collection(int milliSecond)
+{
+	clearTimer(T1);
+
+	while (time1(T1)<milliSecond)
+	{
+		motor[collectionMotor] = 100;
+		motor[rightWheel] = -50;
+		motor[leftWheel] = 127;
+	}
+	motor[collectionMotor] = 0;
+	motor[rightWheel] = 0;
+	motor[leftWheel] = 0;
+}
+
+void collection_on(){
+motor[collectionMotor] = 100;}
+
+void collection_off(){
+	motor[collectionMotor] =0;}
+
+//***********
+
+
 int sensorDetect()
 {
 	int returnVal=1000;
@@ -229,14 +341,14 @@ int sensorDetect()
 	int avgL = get_distanceL();
 	int avgTL = get_distanceTL();
 	//changing this to avgR instead
-	if ((avgR < 50) && (avgR > 10))
+	if ((avgRglobal < 45) && (avgRglobal > 10))
 	{
 		returnVal=returnVal+1;
 	}
-	if((avgL < 50) && (avgL > 10)){
+	if((avgLglobal < 45) && (avgLglobal > 10)){
 		returnVal=returnVal+100;
 	}
-	if((avgTL < 50) && (avgTL > 10)){
+	if((avgTLglobal < 45) && (avgTLglobal > 10)){
 		returnVal=returnVal+10;
 	}
 	return returnVal;
@@ -259,8 +371,7 @@ bool right_detected(){
 
 bool left_detected(){
 	move_left(200);
-	move_forward(500);
-	orientSouth();
+	move_forward(1500);
 	return true;
 }
 
@@ -272,7 +383,7 @@ bool clockwise_circular_search_right(int milliSecond)
 		int _sensorDetect = sensorDetect();
 		bool _tempReturn;
 		//rotates right for 100ms
-		move_right(60);
+		move_right(30);
 		//and pause to scan
 		if (_sensorDetect==1000)
 		{
@@ -280,28 +391,12 @@ bool clockwise_circular_search_right(int milliSecond)
 			//break and return true if sees something
 		}
 		else if(_sensorDetect==1001){
-			//detected with right sensor
-			//writeDebugStreamLine("RIGHT DETECTED");
-			/*_tempReturn = clockwise_circular_search_right(2000);
-			if(_tempReturn==true){
-			return true;
-			}*/
-			// move_right(50);
-			// move_forward(500);
-			// hogCPU();
-			// orientSouth();
-			// releaseCPU();
+			//detected with right
 			return right_detected();
 			//detect with right routine ends here
 			} 
 		else if(_sensorDetect==1100){
 			//detected with left
-			//writeDebugStreamLine("LEFT DETECTED");
-			// move_left(200);
-			// move_forward(500);
-			// hogCPU();
-			// orientSouth();
-			// releaseCPU();
 			return left_detected();
 			//detect with left ends here
 		}
@@ -314,7 +409,7 @@ bool clockwise_circular_search_right(int milliSecond)
 					case 2:
 					case 3:
 					case 6:
-						orientNorth();
+						orientSouth();
 						break;
 					default:
 						left_detected();
@@ -410,29 +505,29 @@ void detectBall()
 			writeDebugStreamLine("EXITED OUT OF THE clockwise_circular_search_right");
 			if (ballDetected){
 				sawBall = 1;
-				move_right(500);
-				move_forward(1000);
+				move_right_with_collection(500);
+				move_forward_with_collection(1000);
 				break;
 			}
 			else {
 				//testing figure eight pattern
 				if ((numPivots == 0)){
 					//rotate right 45
-					move_right(50);
+					move_right_with_collection(50);
 				}
 				else if (numPivots%4 == 0){
 					//if multiple of 4 and not 0
 					//rotate right 90
-					move_right(50);
+					move_right_with_collection(50);
 				}
 				else{
 					//rotate left 90
-					move_left(50);
+					move_left_with_collection(50);
 				}
 
 			}
 			//move foward and start scan
-			move_forward(2000);
+			move_forward_with_collection(2000);
 			numPivots++;
 			//loop back to top and start scan
 			//delay(10000);
@@ -498,23 +593,26 @@ task line_detection(){
 	while(true){
 		if (SensorValue[frontLeft]==0){
 			hogCPU();
-			move_bccw(moveTime);
+			move_back(moveTime);
 			move_right(200);
 			releaseCPU();
+			collection_on();
 			//writeDebugStreamLine("FRONT LEFT LINE DETECTED");
 		}
 		if (SensorValue[frontRight]==0){
 			hogCPU();
-			move_bcw(moveTime);
+			move_back(moveTime);
 			move_left(200);
 			releaseCPU();
+			collection_on();
 			//writeDebugStreamLine("FRONT RIGHT LINE DETECTED");
 		}
-		if (SensorValue[backLeftanal]<=1000){
+		if (SensorValue[backLeft]==0){
 			hogCPU();
 			move_forward(moveTime);
 			move_right(200);
 			releaseCPU();
+			collection_on();
 			//writeDebugStreamLine("BACK LEFT LINE DETECTED %d",SensorValue[backLeftanal]);
 		}
 		if (SensorValue[backRight]==0){
@@ -522,11 +620,26 @@ task line_detection(){
 			move_forward(moveTime);
 			move_left(200);
 			releaseCPU();
+			collection_on();
 			//writeDebugStreamLine("BACK RIGHT LINE DETECTED");
 		}
 	}
 }
 
+
+/*void diamond_path(){
+	move_right_with_collection(100);
+	move_forward_with_collection(2000);
+	clockwise_circular_search_right(2500);
+	move_left_with_collection(100);
+	move_forward_with_collection(2000);
+	clockwise_circular_search_right(2500);
+	move_left_with_collection(300);
+	move_forward_with_collection(2000);
+	clockwise_circular_search_right(2500);
+	move_left_with_collection(100);
+	move_forward_with_collection(2000);
+}*/
 
 void diamond_path(){
 	move_right(100);
@@ -543,18 +656,21 @@ void diamond_path(){
 }
 
 void test_path(){
-	move_right(100);
-	move_back(2000);
+	collection_on();
+	//move_forward(5000);
+	clockwise_circular_search_right(5000);
+	//move_right_with_collection(2000);
 }
 
 task main()
 {
-	clearDebugStream();
 	//move_bccw(1000);
-	clockwise_circular_search_right(2500);
-	//startTask(line_detection);
+	//clockwise_circular_search_right(2500);
+	startTask(line_detection);
+	//collection_on();
+	diamond_path();
 	//move_back(50000);
-	//diamond_path();
+	//test_path();
 	//clockwise_circular_search_right(2500);
 	//detectBall();
 }
