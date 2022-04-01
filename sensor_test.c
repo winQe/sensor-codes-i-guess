@@ -20,9 +20,72 @@
  #pragma DebuggerWindows("Sensors")
 
 
- int distanceR = 0, distanceL = 0, distanceT = 0;
+ int distanceRglob = 0, distanceLglob = 0, distanceTglob = 0;
  int shortDistance = 0;
  int detectsLine = 0;
+
+int get_distanceL()
+{
+	int numberOfReadingsToAverage = 50;
+	int totalL = 0;
+	int avgL = 0;
+	for (int i =0; i< numberOfReadingsToAverage; i++){
+
+		int distanceL = (1.0404*(29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 2.5)) + 1.809;
+		if (distanceL<10){
+			distanceL = 10;
+		}
+		if (distanceL>80){
+			distanceL = 80;
+		}
+		totalL = totalL + distanceL;
+	}
+
+	avgL = totalL/numberOfReadingsToAverage;
+	return avgL;
+}
+
+int get_distanceR()
+{
+	int numberOfReadingsToAverage = 50;
+	int totalR = 0;
+	int avgR = 0;
+	for (int i =0; i< numberOfReadingsToAverage; i++){
+
+		int distanceR = (29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 1.59375) + 6.9212;
+		if (distanceR<10){
+			distanceR = 10;
+		}
+		if (distanceR>80){
+			distanceR = 80;
+		}
+		totalR = totalR + distanceR;
+	}
+
+	avgR = totalR/numberOfReadingsToAverage;
+	return avgR;
+}
+
+int get_distanceTL()
+{
+	int numberOfReadingsToAverage = 100;
+	int totalTL = 0;
+	int avgTL = 0;
+	for (int i =0; i< numberOfReadingsToAverage; i++){
+
+		int distanceTL = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 2.5
+		if (distanceTL<10){
+			distanceTL = 10;
+		}
+		if (distanceTL>80){
+			distanceTL = 80;
+		}
+		totalTL = totalTL + distanceTL;
+	}
+
+	avgTL = totalTL/numberOfReadingsToAverage;
+	return avgTL;
+}
 
 task main()
 {
@@ -36,7 +99,7 @@ task main()
 //SensorValue[line_d] = 0;
 	while(1==1){
 
-		distanceR = 29.988 * pow(SensorValue[sharpRight],-1.173) *1000 * 5/2;
+		/*distanceR = 29.988 * pow(SensorValue[sharpRight],-1.173) *1000 * 5/2;
 		if (distanceR > 80) distanceR = 80;
 		if (distanceR < 10) distanceR = 10;
 		distanceL = 29.988 * pow(SensorValue[sharpLeft],-1.173) *1000 * 5/2;
@@ -44,7 +107,11 @@ task main()
 		if (distanceL < 10) distanceL = 10;
 		distanceT = 29.988 * pow(SensorValue[sharpTop],-1.173) *1000 * 5/2;
 		if (distanceT > 80) distanceT = 80;
-		if (distanceT < 10) distanceT = 10;
+		if (distanceT < 10) distanceT = 10;*/
+		distanceRglob = get_distanceR();
+		distanceLglob = get_distanceL();
+		distanceTglob = get_distanceTL();
+
 		//writeDebugStreamLine("Distance in cm : %i", distance);
 
 		shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058)*1000 * 5/4;
