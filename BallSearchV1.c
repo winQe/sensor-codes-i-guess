@@ -1,16 +1,15 @@
-#pragma config(Sensor, in1,    backLeftanal,   sensorAnalog)
-#pragma config(Sensor, in2,    sharpTop,       sensorAnalog)
+#pragma config(Sensor, in1,    sharpTop,       sensorAnalog)
+#pragma config(Sensor, in2,    sharpShort,     sensorAnalog)
 #pragma config(Sensor, in3,    sharpRight,     sensorAnalog)
-#pragma config(Sensor, in4,    sharpLeft,      sensorAnalog)
-#pragma config(Sensor, in8,    line_a,         sensorAnalog)
-#pragma config(Sensor, dgtl1,  backRight,      sensorDigitalIn)
+#pragma config(Sensor, in5,    sharpLeft,      sensorAnalog)
+#pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
 #pragma config(Sensor, dgtl2,  frontLeft,      sensorDigitalIn)
 #pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
+#pragma config(Sensor, dgtl4,  backRight,      sensorDigitalIn)
 #pragma config(Sensor, dgtl7,  compassN,       sensorDigitalIn)
 #pragma config(Sensor, dgtl8,  compassE,       sensorDigitalIn)
 #pragma config(Sensor, dgtl9,  compassS,       sensorDigitalIn)
 #pragma config(Sensor, dgtl10, compassW,       sensorDigitalIn)
-#pragma config(Sensor, dgtl11, limit_power,    sensorDigitalIn)
 #pragma config(Motor,  port1,           collectionMotor, tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           rightWheel,    tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port3,           leftWheel,     tmotorVex393_MC29, openLoop, reversed)
@@ -616,16 +615,16 @@ task line_detection(){
 			releaseCPU();
 			//writeDebugStreamLine("FRONT RIGHT LINE DETECTED");
 		}
-		if (SensorValue[backLeftanal]<=1000){
+		if (SensorValue[backLeft]==0){
 			hogCPU();
-			move_forward_with_collection(moveTime);
+			move_forward_with_collection(moveTime); //Bob you sure this is correct?
 			move_right_with_collection(200);
 			releaseCPU();
 			//writeDebugStreamLine("BACK LEFT LINE DETECTED %d",SensorValue[backLeftanal]);
 		}
 		if (SensorValue[backRight]==0){
 			hogCPU();
-			move_forward_with_collection(moveTime);
+			//move_forward_with_collection(moveTime); //@bob here also
 			move_left_with_collection(200);
 			releaseCPU();
 			//writeDebugStreamLine("BACK RIGHT LINE DETECTED");
