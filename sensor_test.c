@@ -24,6 +24,7 @@
  int shortDistance = 0;
  int detectsLine = 0;
 
+ int analogValSharpLeft = 0;
 int get_distanceL()
 {
 	int numberOfReadingsToAverage = 50;
@@ -115,6 +116,8 @@ task main()
 		//writeDebugStreamLine("Distance in cm : %i", distance);
 
 		shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058)*1000 * 5/4;
+
+		analogValSharpLeft = SensorValue[sharpLeft];
 	//	if (SensorValue[frontLeft]==0) writeDebugStreamLine("Front Left Detected");
 		//		if (SensorValue[frontRight]==0) writeDebugStreamLine("Front RIGHT Detected");
 		//if (SensorValue[backLeft] <=500) writeDebugStreamLine("Back LEFT VALUE DROPPED %d",SensorValue[backLeft]);
