@@ -1,7 +1,7 @@
 #pragma config(Sensor, in1,    sharpTop,       sensorAnalog)
-#pragma config(Sensor, in2,    sharpShort,     sensorAnalog)
 #pragma config(Sensor, in3,    sharpRight,     sensorAnalog)
 #pragma config(Sensor, in5,    sharpLeft,      sensorAnalog)
+#pragma config(Sensor, in6,    sharpBack,      sensorAnalog)
 #pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
 #pragma config(Sensor, dgtl2,  frontLeft,      sensorDigitalIn)
 #pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
@@ -18,13 +18,18 @@
  #pragma DebuggerWindows("Globals")
  #pragma DebuggerWindows("systemParameters")
  #pragma DebuggerWindows("Sensors")
+//#pragma config(Sensor, in2,    sharpShort,     sensorAnalog
 
-
- int distanceRglob = 0, distanceLglob = 0, distanceTglob = 0;
+ int distanceRglob = 0, distanceLglob = 0, distanceTglob = 0, distanceBglob = 0;
  int shortDistance = 0;
  int detectsLine = 0;
+ int sharpBackDist = 0;
 
  int analogValSharpLeft = 0;
+
+ int analogValSharpBack = 0;
+
+
 int get_distanceL()
 {
 	int numberOfReadingsToAverage = 50;
@@ -67,6 +72,29 @@ int get_distanceR()
 	return avgR;
 }
 
+
+int get_distanceB()
+{
+	int numberOfReadingsToAverage = 50;
+	int totalB = 0;
+	int avgB = 0;
+	for (int i =0; i< numberOfReadingsToAverage; i++){
+
+		int distanceB = 2076  / (SensorValue[sharpBack]-11);
+		//(29.988 * pow(SensorValue[sharpBack], -1.173) * 1000 * 1.59375) + 6.9212;
+		if (distanceB<4){
+			distanceB = 4;
+		}
+		if (distanceB>30){
+			distanceB = 30;
+		}
+		totalB = totalB + distanceB;
+	}
+
+	avgB = totalB/numberOfReadingsToAverage;
+	return avgB;
+}
+
 int get_distanceTL()
 {
 	int numberOfReadingsToAverage = 100;
@@ -74,7 +102,7 @@ int get_distanceTL()
 	int avgTL = 0;
 	for (int i =0; i< numberOfReadingsToAverage; i++){
 
-		int distanceTL = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 2.5
+		int distanceTL = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 2.5;
 		if (distanceTL<10){
 			distanceTL = 10;
 		}
@@ -96,7 +124,7 @@ task main()
 	SensorValue[compassW] = 0;
 	SensorValue[sharpLeft] = 0;
 	SensorValue[sharpTop] = 0;
-	SensorValue[sharpShort] = 0;
+	SensorValue[sharpBack] = 0;
 //SensorValue[line_d] = 0;
 	while(1==1){
 
@@ -112,10 +140,14 @@ task main()
 		distanceRglob = get_distanceR();
 		distanceLglob = get_distanceL();
 		distanceTglob = get_distanceTL();
+		distanceBglob = get_distanceB();
 
 		//writeDebugStreamLine("Distance in cm : %i", distance);
 
-		shortDistance = 12.08 * pow(SensorValue[sharpShort], -1.058)*1000 * 5/4;
+		analogValSharpBack = SensorValue[sharpBack];
+
+		sharpBackDist = 13 * pow((analogValSharpBack*5/1024),-1);
+		shortDistance = 12.08 * pow(SensorValue[sharpBack], -1.058)*1000 * 5/4;
 
 		analogValSharpLeft = SensorValue[sharpLeft];
 	//	if (SensorValue[frontLeft]==0) writeDebugStreamLine("Front Left Detected");
