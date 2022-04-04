@@ -353,7 +353,7 @@ void collection_off(){
 
 //***********
 
-
+// 1 L TL R
 int sensorDetect()
 {
 	int returnVal=1000;
@@ -374,16 +374,26 @@ int sensorDetect()
 	return returnVal;
 }
 
+bool right_detected(){
+	move_forward(1500);
+	return true;
+}
+
+bool left_detected(){
+	move_left(200);
+	move_forward(1500);
+	return true;
+}
+
+void robot_detected(){
+}
+
 bool clockwise_circular_search_right(int milliSecond)
 {
 	clearTimer(T2);
 
 	while(time1(T2)< milliSecond){
-		_sensorDetect = sensorDetect();
-		if (_sensorDetect!=1000){
-			//writeDebugStreamLine("miss lee is the root of all our problems (SOMETHING IS DETECTING)");
-		}
-		bool _tempReturn;
+		int _sensorDetect = sensorDetect();
 		//rotates right for 100ms
 		move_right(30);
 		//and pause to scan
@@ -421,37 +431,57 @@ bool clockwise_circular_search_right(int milliSecond)
 			//if both L and R - check if it is deposition area (if compass is E or NE or N)
 			//if (read_compass() ==
 		}
-		else if (_sensorDetect==1010){
-			//only top sensor detects?
-
-			//detect with top handled
-			} else if(_sensorDetect==1101){
+			else if(_sensorDetect==1101){
 			//left and right detect
-
+				switch(read_compass()){
+					case 2:
+					case 3:
+					case 6:
+						orientSouth();
+						break;
+					default:
+						left_detected();
+						break;
+				}
+			} 
 			//detect with l and r both done
-			} else if(_sensorDetect==1110){
+			else if(_sensorDetect==1110){
 			//detected with left bottom and top - robot detected
 
 			//detect robot handled
-			} else if(_sensorDetect==1011){
+			} 
+		else if(_sensorDetect==1011){
 			//detected with right bottom and left top??
-
+			robot_detected();}
 			//lb and rt detect handle ends here
-			} else if(_sensorDetect==1111){
+		else if(_sensorDetect==1111){
 			//detect with all sensors
-
+			robot_detected();}
 			//detect with all sensors ends here
-			} else if(_sensorDetect==1010){
+		else if(_sensorDetect==1010){
 			//detect with only top sensor
 
 			//detect with only top sensor ended
 		}
-
-
 		//else return false at end of sweep time
+	}
+	int exit_search = 0;
+	while(true){
+		switch(sensorDetect()){
+			case 1110:
+			case 1110:
+			case 1111:
+				move_right(100);
+				break;
+			default:
+				exit_search = 1;
+				break;
+		}
+		if (exit_search==1) break;
 	}
 	return false;
 }
+
 void orientNorth()
 {
 	int value = read_compass();
@@ -504,7 +534,7 @@ void orientSouth()
 	}
 }
 
-
+/*
 void detectBall()
 {
 
@@ -544,7 +574,6 @@ void detectBall()
 			//delay(10000);
 		}
 	}
-	/*
 	if (ballDetected){
 	move_forward(100);
 	move_back(100);
@@ -557,7 +586,7 @@ void detectBall()
 	}
 
 
-	/*
+
 	for (int i = 0; i <= 5; i++)
 	{
 	move_forward(2); //move forward
@@ -569,36 +598,9 @@ void detectBall()
 	}
 	//if(ball_detected_handler(ball_detect())){collect_ball();break;};
 	}
-	*/
+	
 }
-
-/*task line_detection(){
-while(true){
-if (SensorValue[frontLeft]==0 && SensorValue[backLeft] ==0){
-hogCPU();
-//writeDebugStreamLine("LEFT LINE DETECTED");
-move_right(1000);
-releaseCPU();
-}
-if (SensorValue[frontRight]==0 && SensorValue[backRight] ==0){
-hogCPU();
-//writeDebugStreamLine("RIGHT LINE DETECTED");
-move_left(1000);
-releaseCPU();
-}
-else if (SensorValue[frontLeft]==0 || SensorValue[frontRight] == 0){
-hogCPU();
-//writeDebugStreamLine("FRONT LINE DETECTED");
-move_back(1000);
-releaseCPU();}
-else if (SensorValue[backLeft]==0 || SensorValue[backRight]==0){
-hogCPU();
-//writeDebugStreamLine("BACK LINE DETECTED");
-move_forward(1000);
-releaseCPU();}
-}
-}*/
-
+*/
 
 task line_detection(){
 	int moveTime = 750;
