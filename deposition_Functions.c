@@ -8,14 +8,18 @@
 void deposit(){
 
 		clearTimer (T1);
-		while (time1(T1)< 500){
+		while (time1(T1)< 1000){
 			motor[collector] = -127;
 		}
 		motor[collector] = 0;
 		clearTimer(T2);
-		while(time1(T2)<5000){
+		while(time1(T2)<2000){
 
 			motor[depositor] = -20;
+	}
+	clearTimer(T2);
+			while(time1(T2)<2000){
+			motor[depositor] = 20;
 	}
 	motor[depositor] = 0;
 }
@@ -25,16 +29,14 @@ void collection_on(){
 
 task main()
 {
-	SensorValue[encoder1] = 0;
-/*clearTimer(T2);
-while(time1(T2)<2000){
+
+clearTimer(T2);
+while(time1(T2)<5000){
 	collection_on();}
 	motor[collector]=0;
 	deposit();
-*/
-//SensorValue[encoder]=0;
-while(true){
-// motor[depositor]=100;
 
-}
+//SensorValue[encoder]=0;
+
+
 }
