@@ -50,7 +50,7 @@ South-East 0110 = 6
 South 0010 =  2
 South-West 0011 = 3
 West 0001 = 1
-North-West 10001 = 9
+North-West 1001 = 9
 
 North >=8
 East >=4
@@ -443,13 +443,13 @@ bool clockwise_circular_search_right(int milliSecond)
 						left_detected();
 						break;
 				}
-			} 
+			}
 			//detect with l and r both done
 			else if(_sensorDetect==1110){
 			//detected with left bottom and top - robot detected
 
 			//detect robot handled
-			} 
+			}
 		else if(_sensorDetect==1011){
 			//detected with right bottom and left top??
 			robot_detected();}
@@ -469,7 +469,7 @@ bool clockwise_circular_search_right(int milliSecond)
 	while(true){
 		switch(sensorDetect()){
 			case 1110:
-			case 1110:
+			case 1011:
 			case 1111:
 				move_right(100);
 				break;
@@ -598,7 +598,7 @@ void detectBall()
 	}
 	//if(ball_detected_handler(ball_detect())){collect_ball();break;};
 	}
-	
+
 }
 */
 
@@ -672,7 +672,7 @@ void diamond_path(){
 void test_path(){
 	collection_on();
 	//move_forward(5000);
-	clockwise_circular_search_right(5000);
+	clockwise_circular_search_right(2500);
 	//move_right_with_collection(2000);
 }
 
@@ -682,7 +682,7 @@ task main()
 	//clockwise_circular_search_right(2500);
 	startTask(line_detection);
 	//collection_on();
-	diamond_path();
+	test_path();
 	//move_back(50000);
 	//test_path();
 	//clockwise_circular_search_right(2500);
