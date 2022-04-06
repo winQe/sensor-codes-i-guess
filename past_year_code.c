@@ -1274,7 +1274,9 @@ clearTimer(timer2);
 if ( SensorValue[sensorMiddleLow] < 700 ){
 do{
 motor[retrieval_motor] = -RETRIEVE_SPEED;
-}while(SensorValue[Encoder1] > backtrackValue && time1[timer2] < 1000);
+}while(SensorValue[
+    
+    1] > backtrackValue && time1[timer2] < 1000);
 motor[retrieval_motor] = 0;
 motion_move_forward(100);
 }

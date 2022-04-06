@@ -1,11 +1,12 @@
-#pragma config(Sensor, in1,    sharpTop,       sensorAnalog)
-#pragma config(Sensor, in3,    sharpRight,     sensorAnalog)
+#pragma config(Sensor, in3,    sharpTop,       sensorAnalog)
+#pragma config(Sensor, in2,    sharpRight,     sensorAnalog)
 #pragma config(Sensor, in5,    sharpLeft,      sensorAnalog)
-#pragma config(Sensor, in6,    sharpBack,      sensorAnalog)
+#pragma config(Sensor, in1,    sharpShort,     sensorAnalog)
 #pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
-#pragma config(Sensor, dgtl2,  frontLeft,      sensorDigitalIn)
+#pragma config(Sensor, dgtl11,  frontLeft,      sensorDigitalIn)
 #pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
-#pragma config(Sensor, dgtl4,  backRight,      sensorDigitalIn)
+#pragma config(Sensor, dgtl2,  backRight,      sensorDigitalIn)
+#pragma config(Sensor, dgtl5,  encoder,        sensorQuadEncoder)
 #pragma config(Sensor, dgtl7,  compassN,       sensorDigitalIn)
 #pragma config(Sensor, dgtl8,  compassE,       sensorDigitalIn)
 #pragma config(Sensor, dgtl9,  compassS,       sensorDigitalIn)
@@ -32,7 +33,7 @@
 
 int get_distanceL()
 {
-	int numberOfReadingsToAverage = 50;
+	int numberOfReadingsToAverage = 20;
 	int totalL = 0;
 	int avgL = 0;
 	for (int i =0; i< numberOfReadingsToAverage; i++){
@@ -53,7 +54,7 @@ int get_distanceL()
 
 int get_distanceR()
 {
-	int numberOfReadingsToAverage = 50;
+	int numberOfReadingsToAverage = 20;
 	int totalR = 0;
 	int avgR = 0;
 	for (int i =0; i< numberOfReadingsToAverage; i++){
@@ -72,19 +73,16 @@ int get_distanceR()
 	return avgR;
 }
 
-
 int get_distanceB()
 {
-	int numberOfReadingsToAverage = 50;
+	int numberOfReadingsToAverage = 20;
 	int totalB = 0;
 	int avgB = 0;
 	for (int i =0; i< numberOfReadingsToAverage; i++){
-
-		int distanceB = 2076  / (SensorValue[sharpBack]-11);
-		//(29.988 * pow(SensorValue[sharpBack], -1.173) * 1000 * 1.59375) + 6.9212;
+		int distanceB = 12.08 * pow(SensorValue[sharpShort], -1.058)*1000 * 5/4;
 		if (distanceB<4){
-			distanceB = 4;
-		}
+			distanceB = 4;}
+
 		if (distanceB>30){
 			distanceB = 30;
 		}
@@ -124,7 +122,6 @@ task main()
 	SensorValue[compassW] = 0;
 	SensorValue[sharpLeft] = 0;
 	SensorValue[sharpTop] = 0;
-	SensorValue[sharpBack] = 0;
 //SensorValue[line_d] = 0;
 	while(1==1){
 
@@ -144,10 +141,10 @@ task main()
 
 		//writeDebugStreamLine("Distance in cm : %i", distance);
 
-		analogValSharpBack = SensorValue[sharpBack];
+		//analogValSharpBack = SensorValue[sharpBack];
 
-		sharpBackDist = 13 * pow((analogValSharpBack*5/1024),-1);
-		shortDistance = 12.08 * pow(SensorValue[sharpBack], -1.058)*1000 * 5/4;
+		//sharpBackDist = 13 * pow((analogValSharpBack*5/1024),-1);
+		//shortDistance = 12.08 * pow(SensorValue[sharpBack], -1.058)*1000 * 5/4;
 
 		analogValSharpLeft = SensorValue[sharpLeft];
 	//	if (SensorValue[frontLeft]==0) writeDebugStreamLine("Front Left Detected");
