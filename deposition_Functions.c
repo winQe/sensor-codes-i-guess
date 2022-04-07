@@ -15,11 +15,11 @@ void deposit(){
 		clearTimer(T2);
 		while(time1(T2)<2000){
 
-			motor[depositor] = -20;
+			motor[depositor] = -25;
 	}
 	clearTimer(T2);
-			while(time1(T2)<2000){
-			motor[depositor] = 20;
+			while(time1(T2)<2050){
+			motor[depositor] = 25;
 	}
 	motor[depositor] = 0;
 }

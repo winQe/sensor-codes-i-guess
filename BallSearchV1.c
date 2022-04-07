@@ -5,12 +5,12 @@
 #pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
 #pragma config(Sensor, dgtl2,  backRight,      sensorDigitalIn)
 #pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
-#pragma config(Sensor, dgtl5,  encoder,        sensorQuadEncoder)
 #pragma config(Sensor, dgtl7,  compassN,       sensorDigitalIn)
 #pragma config(Sensor, dgtl8,  compassE,       sensorDigitalIn)
 #pragma config(Sensor, dgtl9,  compassS,       sensorDigitalIn)
 #pragma config(Sensor, dgtl10, compassW,       sensorDigitalIn)
 #pragma config(Sensor, dgtl11, frontLeft,      sensorDigitalIn)
+#pragma config(Sensor, dgtl12, ballLimit,      sensorDigitalIn)
 #pragma config(Motor,  port1,           depositor,     tmotorVex393_HBridge, openLoop)
 #pragma config(Motor,  port2,           rightWheel,    tmotorVex393_MC29, openLoop, reversed)
 #pragma config(Motor,  port3,           collectionMotor, tmotorVex393_MC29, openLoop)
@@ -24,7 +24,7 @@
 #pragma DebuggerWindows("Sensors")
 
 int depositionOn = 0;
-int _sensorDetect;
+int ballCollected = 0;
 
 
 void orientNorth();
@@ -272,14 +272,14 @@ int sensorDetect()
 	int avgL = get_distanceL();
 	int avgTL = get_distanceTL();
 	//changing this to avgR instead
-	if ((avgR < 35) && (avgR > 10))
+	if ((avgR < 30) && (avgR > 10))
 	{
 		returnVal=returnVal+1;
 	}
-	if((avgL < 35) && (avgL > 10)){
+	if((avgL < 30) && (avgL > 10)){
 		returnVal=returnVal+100;
 	}
-	if((avgTL < 35) && (avgTL > 10)){
+	if((avgTL < 30) && (avgTL > 10)){
 		returnVal=returnVal+10;
 	}
 	return returnVal;
@@ -297,7 +297,7 @@ bool clockwise_circular_search_right(int milliSecond)
 {
 	clearTimer(T2);
 	while(time1(T2)< milliSecond){
-		_sensorDetect = sensorDetect();
+		int _sensorDetect = sensorDetect();
 		//1 Left Top Right
 		if(_sensorDetect==1001){
 			move_right(5);
@@ -321,7 +321,7 @@ bool clockwise_circular_search_right(int milliSecond)
 			else deposit(); //top has detected
 			//detect with left ends here
 		}
-			else if(_sensorDetect==1101){
+			/*else if(_sensorDetect==1101){
 			//left and right detect
 				switch(read_compass()){
 					case 2:
@@ -338,7 +338,7 @@ bool clockwise_circular_search_right(int milliSecond)
 						else continue;
 						break;
 				}
-			}
+			}*/
 			//detect with l and r both done
 		move_right(20);
 		}
@@ -348,7 +348,7 @@ bool clockwise_circular_search_right(int milliSecond)
 			case 1110:
 			case 1011:
 			case 1111:
-				move_right(100);
+				move_right(10);
 				break;
 			default:
 				exit_search = 1;
@@ -369,20 +369,33 @@ void orientSouth()
 			//turn right
 			while (value != 2)
 			{
-				move_right(100);
+				move_right(10);
 				value = read_compass();
 			}
 		}
 		else
 		{
 			//turn left
-			while (value != 8)
+			while (value != 2)
 			{
-				move_left(100);
+				move_left(10);
 				value = read_compass();
 			}
 		}
 	}
+}
+
+void orientSouthNewFn()
+{
+	int value = read_compass();
+	if (value != 2){
+			while (value != 2)
+			{
+				move_right(10);
+				value = read_compass();
+			}
+		}
+ move_left(200);
 }
 
 void orientNorth()
@@ -395,7 +408,7 @@ void orientNorth()
 			//turn right
 			while (value != 8)
 			{
-				move_right(100);
+				move_right(10);
 				value = read_compass();
 			}
 		}
@@ -404,7 +417,7 @@ void orientNorth()
 			//turn left
 			while (value != 8)
 			{
-				move_left(100);
+				move_left(10);
 				value = read_compass();
 			}
 		}
@@ -447,14 +460,14 @@ void deposit(){
 	motor[collectionMotor] = 0;
 	clearTimer(T4);
 	while(time1(T4)<2000){
-		motor[depositor] = -20;
+		motor[depositor] = -25;
 	}
 	motor[depositor] = 0;
 	delay(200);
 	clearTimer(T4);
 	delay(500);
 			clearTimer(T4);
-			while(time1(T4)<1100){
+			while(time1(T4)<2050){
 			motor[depositor] = 25;
 	}
 	motor[depositor] = 0;
@@ -514,8 +527,8 @@ task line_detection(){
 
 void diamond_path(){
 	while(true){
-		move_right(100);
-		move_forward(2000);
+		//move_right(100);
+		move_forward(3000);
 		clockwise_circular_search_right(2500);
 		move_left(100);
 		move_forward(2000);
@@ -544,7 +557,7 @@ task ball_deposition(){
 		}
 		hogCPU();
 		//first orient the robot to face South
-		orientSouth();
+		orientNorth();
 		//then move back till short sensor gives a particular value
 		//disable line detection
 		while (true)
@@ -552,7 +565,7 @@ task ball_deposition(){
 			int back_dist = get_distanceB();
 			if ((SensorValue[backLeft] == 0 || SensorValue[backRight] == 0)&&(back_dist<=10))
 			{
-			orientSouth();
+			orientNorth();
 			move_back(10);
 			deposit();
 				break;
@@ -563,7 +576,7 @@ task ball_deposition(){
 			}
 			if (SensorValue[backLeft] == 0 && back_dist>10){
 				move_forward(250);
-				orientSouth();
+			orientNorth();
 			}
 			move_back(10);
 		}
@@ -578,12 +591,12 @@ task ball_deposition(){
 task ball_deposition_temp(){
 	while(true){
 		while(depositionOn==0){
-			// ADD code here to change depositonOn = 1
+			if (SensorValue[ballLimit] == 0)depositionOn=1;
 			continue;
 		}
 		hogCPU();
 		//first orient the robot to face South
-		orientEast();
+		orientSouthNewFn();
 		//then move back till short sensor gives a particular value
 		//disable line detection
 		while (true)
@@ -591,7 +604,7 @@ task ball_deposition_temp(){
 			int back_dist = get_distanceB();
 			if ((SensorValue[backLeft] == 0 || SensorValue[backRight] == 0)&&(back_dist<=10))
 			{
-			orientEast();
+			orientSouthNewFn();
 			move_back(10);
 			stopMC();
 			deposit();
@@ -599,11 +612,11 @@ task ball_deposition_temp(){
 			}
 			if (SensorValue[backLeft] == 0 && back_dist>10){
 				move_forward(250);
-				orientEast();
+				orientSouth();
 			}
-			if (SensorValue[backLeft] == 0 && back_dist>10){
+			if (SensorValue[backRight] == 0 && back_dist>10){
 				move_forward(250);
-				orientEast();
+				orientSouth();
 			}
 			move_back(10);
 		}
@@ -611,21 +624,23 @@ task ball_deposition_temp(){
 		depositionOn = 0;
     //release ball depending on servo or motor
 		releaseCPU();
-
 	}
 }
 
 task main()
 {
 	//clockwise_circular_search_right(2500);
+	//orientNorth();
+//	while(true) {stopMC();}
 	//move_forward(2000);
+	//orientSouth();
 	startTask(line_detection);
-	move_forward(20000);
-	//startTask(ball_deposition);
-	///startTask(ball_deposition_temp);//temporary function delete tomorrow
+	//move_forward(20000);
+ //startTask(ball_deposition);
+	startTask(ball_deposition_temp);//temporary function delete tomorrow
 	//test_path();
 	//collection_on();
-	//diamond_path();
+	diamond_path();
 	//move_back(1000);
 	//test_path();
 }
