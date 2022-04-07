@@ -1,7 +1,7 @@
 #pragma config(Sensor, in1,    sharpShort,     sensorAnalog)
 #pragma config(Sensor, in2,    sharpRight,     sensorAnalog)
-#pragma config(Sensor, in3,    sharpTop,       sensorAnalog)
 #pragma config(Sensor, in5,    sharpLeft,      sensorAnalog)
+#pragma config(Sensor, in8,    sharpTop,       sensorAnalog)
 #pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
 #pragma config(Sensor, dgtl2,  backRight,      sensorDigitalIn)
 #pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
@@ -24,11 +24,13 @@
 #pragma DebuggerWindows("Sensors")
 
 int depositionOn = 0;
+int _sensorDetect;
 
 
 void orientNorth();
 void orientSouth();
 void orientEast();
+void deposit();
 // Compass mapping
 /*
 N E S W
@@ -275,7 +277,7 @@ int sensorDetect()
 		returnVal=returnVal+1;
 	}
 	if((avgL < 35) && (avgL > 10)){
-		//returnVal=returnVal+100;
+		returnVal=returnVal+100;
 	}
 	if((avgTL < 35) && (avgTL > 10)){
 		returnVal=returnVal+10;
@@ -295,25 +297,28 @@ bool clockwise_circular_search_right(int milliSecond)
 {
 	clearTimer(T2);
 	while(time1(T2)< milliSecond){
-		int _sensorDetect = sensorDetect();
+		_sensorDetect = sensorDetect();
 		//1 Left Top Right
 		if(_sensorDetect==1001){
+			move_right(5);
 			_sensorDetect = sensorDetect();
-			if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){
+			//if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){ //Top doesn't detect
+			if (topDetect() == false){
 			collection_on();
 			move_forward(2000);
 			return true;}
-			else continue;
+			else deposit();//top has detected
 			//detect with right routine ends here
 			}
 		else if(_sensorDetect==1100){
 			//detected with left
 			move_left(200);
-			if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){
+			//if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){
+			if(topDetect()== false){
 				collection_on();
 				move_forward(2000);
 				return true;}
-			else continue;
+			else deposit(); //top has detected
 			//detect with left ends here
 		}
 			else if(_sensorDetect==1101){
@@ -325,7 +330,12 @@ bool clockwise_circular_search_right(int milliSecond)
 						orientSouth();
 						break;
 					default:
-						right_detected();
+						move_left(200);
+						if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){
+							collection_on();
+							move_forward(2000);
+							return true;}
+						else continue;
 						break;
 				}
 			}
@@ -521,7 +531,7 @@ void diamond_path(){
 void test_path(){
 	//collection_on();
 	//move_forward(5000);
-clockwise_circular_search_right(12000);
+clockwise_circular_search_right(12500);
 	//move_right_with_collection(2000);
 	//delivery();
 }
@@ -610,9 +620,10 @@ task main()
 	//clockwise_circular_search_right(2500);
 	//move_forward(2000);
 	startTask(line_detection);
+	move_forward(20000);
 	//startTask(ball_deposition);
-	startTask(ball_deposition_temp);//temporary function delete tomorrow
-	test_path();
+	///startTask(ball_deposition_temp);//temporary function delete tomorrow
+	//test_path();
 	//collection_on();
 	//diamond_path();
 	//move_back(1000);
