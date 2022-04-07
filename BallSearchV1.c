@@ -272,14 +272,14 @@ int sensorDetect()
 	int avgL = get_distanceL();
 	int avgTL = get_distanceTL();
 	//changing this to avgR instead
-	if ((avgR < 30) && (avgR > 10))
+	if ((avgR < 50) && (avgR > 10))
 	{
 		returnVal=returnVal+1;
 	}
-	if((avgL < 30) && (avgL > 10)){
+	if((avgL < 50) && (avgL > 10)){
 		returnVal=returnVal+100;
 	}
-	if((avgTL < 30) && (avgTL > 10)){
+	if((avgTL < 50) && (avgTL > 10)){
 		returnVal=returnVal+10;
 	}
 	return returnVal;
@@ -304,6 +304,7 @@ bool clockwise_circular_search_right(int milliSecond)
 			_sensorDetect = sensorDetect();
 			//if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){ //Top doesn't detect
 			if (topDetect() == false){
+			//move_right(5);
 			collection_on();
 			move_forward(2000);
 			return true;}
@@ -340,7 +341,7 @@ bool clockwise_circular_search_right(int milliSecond)
 				}
 			}*/
 			//detect with l and r both done
-		move_right(20);
+		move_right(15);
 		}
 	int exit_search = 0;
 	while(true){
@@ -596,7 +597,7 @@ task ball_deposition_temp(){
 		}
 		hogCPU();
 		//first orient the robot to face South
-		orientSouthNewFn();
+		orientSouth();
 		//then move back till short sensor gives a particular value
 		//disable line detection
 		while (true)
@@ -604,7 +605,7 @@ task ball_deposition_temp(){
 			int back_dist = get_distanceB();
 			if ((SensorValue[backLeft] == 0 || SensorValue[backRight] == 0)&&(back_dist<=10))
 			{
-			orientSouthNewFn();
+			orientSouth();
 			move_back(10);
 			stopMC();
 			deposit();
@@ -629,18 +630,20 @@ task ball_deposition_temp(){
 
 task main()
 {
-	//clockwise_circular_search_right(2500);
+
+startTask(line_detection);
+clockwise_circular_search_right(12000);
 	//orientNorth();
 //	while(true) {stopMC();}
 	//move_forward(2000);
 	//orientSouth();
-	startTask(line_detection);
+
 	//move_forward(20000);
  //startTask(ball_deposition);
-	startTask(ball_deposition_temp);//temporary function delete tomorrow
+//	startTask(ball_deposition_temp);//temporary function delete tomorrow
 	//test_path();
 	//collection_on();
-	diamond_path();
+//	diamond_path();
 	//move_back(1000);
 	//test_path();
 }
