@@ -5,7 +5,7 @@
 #pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
 #pragma config(Sensor, dgtl2,  backRight,      sensorDigitalIn)
 #pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
-#pragma config(Sensor, dgtl5,  encoder,        sensorQuadEncoder)
+#pragma config(Sensor, dgtl4,  encoder,        sensorQuadEncoder)
 #pragma config(Sensor, dgtl7,  compassN,       sensorDigitalIn)
 #pragma config(Sensor, dgtl8,  compassE,       sensorDigitalIn)
 #pragma config(Sensor, dgtl9,  compassS,       sensorDigitalIn)
