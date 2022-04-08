@@ -35,6 +35,7 @@ void orientNorth();
 void orientSouth();
 void orientEast();
 void deposit();
+bool clockwise_circular_search_right(int milliSecond);
 // Compass mapping
 /*
 N E S W
@@ -304,9 +305,9 @@ bool clockwise_circular_search_right_compass2()
 
 bool clockwise_circular_search_right_compass()
 {
-	int newvalue=-10; //value after move right
+	int newvalue=0; //value after move right
 	int ogvalue = read_compass(); //original value
-	move_right(200);
+	clockwise_circular_search_right(500);
 	while(newvalue!=ogvalue){
 		newvalue = read_compass(); //after move right
 		_sensorDetect = sensorDetect();
@@ -358,7 +359,7 @@ bool clockwise_circular_search_right_compass()
 				}
 			}
 			//detect with l and r both done
-		move_right(5);
+		move_right(10);
 		}
 	int exit_search = 0;
 	while(true){
@@ -791,8 +792,9 @@ task main()
 //	startTask(line_detection);
 	////move_forward(20000);
  // startTask(ball_deposition);
-	clockwise_circular_search_right_compass2();
-	startTask(ball_deposition);//temporary function delete tomorrow
+	move_forward(3000);
+	//////clockwise_circular_search_right_compass();
+	//startTask(ball_deposition);//temporary function delete tomorrow
 
 	////move_right_search(5000);
 	////test_path();
