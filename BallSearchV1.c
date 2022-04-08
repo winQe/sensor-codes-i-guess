@@ -169,6 +169,7 @@ void move_forward(int milliSecond)
 	{
 		motor[rightWheel] = -120;
 		motor[leftWheel] = 110;
+		motor[collectionMotor] = 127;
 	}
 	motor[rightWheel] = 0;
 	motor[leftWheel] = 0;
@@ -207,7 +208,7 @@ void stopMC(){
 }
 
 void collection_on(){
-motor[collectionMotor] = 100;}
+motor[collectionMotor] = 127;}
 
 void collection_off(){
 	motor[collectionMotor] =0;}
@@ -569,13 +570,13 @@ void first_ball_path(){
 	}
 }
 
-task diamond_path(){
+void diamond_path(){
 /*	switch(no_of_balls_collected){
 		case 5:
 		first_ball_path();
 		break;
 		default:*/
-		while(true){
+
 			//move_right(100);
 			move_forward(2000);
 			clockwise_circular_search_right(2500);
@@ -587,7 +588,7 @@ task diamond_path(){
 			clockwise_circular_search_right(2500);
 			move_left(100);
 			move_forward(2000);
-		}
+
 }
 
 void test_path(){
@@ -641,25 +642,31 @@ task ball_deposition(){
 
 		depositionOn = 0;
 		no_of_balls_collected++;
-		stopTask(diamond_path);
     //release ball depending on servo or motor
 		releaseCPU();
 		collection_on();
-		startTask(diamond_path);
+		move_forward(2000);
 	}
 }
 
 task main()
 {
-	while(true){
-	collection_on();
-	startTask(line_detection);
-	//move_forward(20000);
- startTask(ball_deposition);
-	//startTask(ball_deposition);//temporary function delete tomorrow
-	startTask(diamond_path);
-	//test_path();
-	//collection_on();
-	//clockwise_circular_search_right(2500);
-}
+while(true){
+	//startTask(line_detection);
+//	//move_forward(20000);
+//collection_on();
+startTask(ball_deposition);
+	move_forward(3000);
+	clockwise_circular_search_right(5000);
+	move_left(100);
+	move_forward(2000);
+	clockwise_circular_search_right(2500);
+	move_left(300);
+	move_forward(2000);
+	clockwise_circular_search_right(2500);
+	move_left(100);
+	move_forward(2000);}
+//	//test_path();
+//	//clockwise_circular_search_right(2500);
+//}
 }
