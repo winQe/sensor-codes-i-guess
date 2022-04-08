@@ -2,13 +2,12 @@
 #pragma config(Sensor, in2,    sharpLeft,      sensorAnalog)
 #pragma config(Sensor, in5,    sharpRight,     sensorAnalog)
 #pragma config(Sensor, in8,    sharpTop,       sensorAnalog)
-#pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
-#pragma config(Sensor, dgtl2,  backRight,      sensorDigitalIn)
-#pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
-#pragma config(Sensor, dgtl4,  encoder,        sensorQuadEncoder)
 #pragma config(Sensor, dgtl7,  compassN,       sensorDigitalIn)
 #pragma config(Sensor, dgtl8,  compassE,       sensorDigitalIn)
 #pragma config(Sensor, dgtl9,  compassS,       sensorDigitalIn)
+#pragma config(Sensor, dgtl1,  backLeft,       sensorDigitalIn)
+#pragma config(Sensor, dgtl2,  backRight,      sensorDigitalIn)
+#pragma config(Sensor, dgtl3,  frontRight,     sensorDigitalIn)
 #pragma config(Sensor, dgtl10, compassW,       sensorDigitalIn)
 #pragma config(Sensor, dgtl11, frontLeft,      sensorDigitalIn)
 #pragma config(Sensor, dgtl12, LimitSwitch,    sensorDigitalIn)
@@ -30,7 +29,7 @@
  int analogValSharpLeft = 0;
 
  int analogValSharpBack = 0;
-
+ float volt = 0;
 
 int get_distanceL()
 {
@@ -125,7 +124,7 @@ task main()
 	SensorValue[sharpTop] = 0;
 //SensorValue[line_d] = 0;
 	while(1==1){
-
+	volt = nImmediateBatteryLevel;
 		/*distanceR = 29.988 * pow(SensorValue[sharpRight],-1.173) *1000 * 5/2;
 		if (distanceR > 80) distanceR = 80;
 		if (distanceR < 10) distanceR = 10;
