@@ -29,7 +29,7 @@
  int analogValSharpLeft = 0;
 
  int analogValSharpBack = 0;
-
+ float volt = 0;
 
 int get_distanceL()
 {
@@ -124,7 +124,7 @@ task main()
 	SensorValue[sharpTop] = 0;
 //SensorValue[line_d] = 0;
 	while(1==1){
-
+	volt = nImmediateBatteryLevel;
 		/*distanceR = 29.988 * pow(SensorValue[sharpRight],-1.173) *1000 * 5/2;
 		if (distanceR > 80) distanceR = 80;
 		if (distanceR < 10) distanceR = 10;
