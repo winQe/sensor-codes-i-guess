@@ -1,5 +1,6 @@
 #pragma config(Sensor, in1,    sharpShort,     sensorAnalog)
 #pragma config(Sensor, in2,    sharpLeft,      sensorAnalog)
+#pragma config(Sensor, in5,    sharpRight,     sensorAnalog)
 #pragma config(Sensor, in8,    sharpTop,       sensorAnalog)
 #pragma config(Sensor, dgtl7,  compassN,       sensorDigitalIn)
 #pragma config(Sensor, dgtl8,  compassE,       sensorDigitalIn)

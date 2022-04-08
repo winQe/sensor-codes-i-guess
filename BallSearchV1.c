@@ -30,7 +30,7 @@ int startRight = 0;
 int no_of_balls_collected  = 0;
 int _sensorDetect;
 
-
+float volt = 0;
 void orientNorth();
 void orientSouth();
 void orientEast();
@@ -158,6 +158,19 @@ void move_right(int milliSecond)
 	motor[leftWheel] = 0;
 }
 
+void move_right_search(int milliSecond)
+{
+	clearTimer(T1);
+	while (time1(T1)<milliSecond)
+	{
+		motor[rightWheel] = 30;
+		motor[leftWheel] = 45;
+	}
+	motor[rightWheel] = 0;
+	motor[leftWheel] = 0;
+}
+
+
 
 /** move only (without collection) **/
 
@@ -206,8 +219,11 @@ void stopMC(){
 	motor[leftWheel] = 0;
 }
 
-void collection_on(){
-motor[collectionMotor] = 100;}
+task collection_on(){
+	while(True){
+		motor[collectionMotor] = 100;
+	}
+	}
 
 void collection_off(){
 	motor[collectionMotor] =0;}
@@ -328,7 +344,7 @@ bool clockwise_circular_search_left(int milliSecond)
 			//if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){ //Top doesn't detect
 			if (topDetect() == false){
 				//move_right(5);
-				collection_on();
+				//collection_on();
 				clearTimer(T4);
 				while (time1(T4) < 2000){
 					if (SensorValue[ballLimit] == 0) return true;
@@ -343,7 +359,7 @@ bool clockwise_circular_search_left(int milliSecond)
 			move_left(200);
 			//if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){
 			if(topDetect()== false){
-				collection_on();
+				//collection_on();
 				move_forward(2000);
 				return true;}
 			else deposit(); //top has detected
@@ -361,7 +377,7 @@ bool clockwise_circular_search_left(int milliSecond)
 					default:
 						move_left(200);
 				if(topDetect()== false){
-					collection_on();
+					//collection_on();
 					move_forward(2000);
 					return true;}
 				else deposit(); //top has detected
@@ -609,7 +625,8 @@ task ball_deposition(){
 				collector_count++;
 				motor[collectionMotor] = 127;}
 	}
-		collection_off();
+stopTask(collection_on);
+	collection_off();
 			continue;
 		}
 		hogCPU();
@@ -644,7 +661,7 @@ task ball_deposition(){
 		stopTask(diamond_path);
     //release ball depending on servo or motor
 		releaseCPU();
-		collection_on();
+		startTask(collection_on);
 		startTask(diamond_path);
 	}
 }
@@ -652,14 +669,18 @@ task ball_deposition(){
 task main()
 {
 	while(true){
-	collection_on();
+ 	//move_forward(3000);
+	startTask(collection_on);
 	startTask(line_detection);
-	//move_forward(20000);
- startTask(ball_deposition);
-	//startTask(ball_deposition);//temporary function delete tomorrow
-	startTask(diamond_path);
-	//test_path();
-	//collection_on();
+	////move_forward(20000);
+  startTask(ball_deposition);
+
+	////startTask(ball_deposition);//temporary function delete tomorrow
+
+	////move_right_search(5000);
+	////test_path();
+	////collection_on();
 	//clockwise_circular_search_right(2500);
+	//volt = nImmediateBatteryLevel;
 }
 }
