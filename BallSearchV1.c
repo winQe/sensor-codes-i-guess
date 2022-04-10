@@ -429,8 +429,8 @@ bool clockwise_circular_search_right(int milliSecond)
 		// 1 Left Top Right
 		if (_sensorDetect == 1001)
 		{
-			stopMC();
-			sleep(500);
+			//stopMC();
+			//sleep(500);
 			if (sensorDetect() == _sensorDetect)
 			{
 				move_right(5);
@@ -703,25 +703,49 @@ void orientEast()
 	}
 }
 
+// void deposit()
+// {
+// 	clearTimer(T1);
+// 	while(time1(T1)<2000)
+// 	{
+// 		motor[collectionMotor] = 127;
+// 	}
+// 	motor[collectionMotor] = 0;
+// 	while (SensorValue[encoder] > -100)
+// 	{
+// 		motor[depositor] = -30;
+// 	}
+// 	motor[depositor] = 0;
+// 	delay(2000);
+// 	while (SensorValue[encoder] < -66)
+// 	{
+// 		motor[depositor] = 25;
+// 	}
+// 	motor[depositor] = 0;
+// }
+
 void deposit()
 {
 	clearTimer(T1);
-	while(time1(T1)<2000)
+	while (SensorValue[encoder] <45 )
 	{
-		motor[collectionMotor] = 127;
+		motor[depositor] = 30;
 	}
-	motor[collectionMotor] = 0;
-	while (SensorValue[encoder] > -100)
+	while (SensorValue[encoder] >-100 )
 	{
 		motor[depositor] = -30;
 	}
 	motor[depositor] = 0;
-	delay(2000);
-	while (SensorValue[encoder] < -66)
+	while(time1(T1)<3000)
 	{
-		motor[depositor] = 25;
+		motor[collectionMotor] = 127;
 	}
-	motor[depositor] = 0;
+	motor[collectionMotor] = 0;
+	while (SensorValue[encoder] <-10 )
+	{
+		motor[depositor] = 20;
+	}
+			motor[depositor] = 0;
 }
 
 task line_detection()
@@ -730,30 +754,37 @@ task line_detection()
 	while (true)
 	{
 		clearTimer(T3);
-		int front_count = 0;
-		int back_count = 0;
-		while (time1(T3) < 10000)
+		int boundary_count = 0;
+
+		while (time1(T3) < 6000)
 		{
-			if (front_count >= 3)
+			if (boundary_count >= 2 && (SensorValue[frontLeft] == 0 || SensorValue[frontRight] == 0 ))
 			{
+
 				hogCPU();
 				move_back(750);
 				move_right(1200);
 				releaseCPU();
+				break;
+
 			}
-			if (back_count >= 3)
+
+			if (boundary_count >= 2 && (SensorValue[backLeft] == 0 || SensorValue[backRight] == 0 ))
 			{
+
 				hogCPU();
 				move_forward(750);
 				move_right(1200);
 				releaseCPU();
+				break;
 			}
+
 			if (SensorValue[frontLeft] == 0 && depositionOn == 0)
 			{
 				hogCPU();
 				move_back(moveTime);
 				move_right(200);
-				front_count += 1;
+				boundary_count += 1;
 				releaseCPU();
 			}
 			if (SensorValue[frontRight] == 0 && depositionOn == 0)
@@ -761,7 +792,7 @@ task line_detection()
 				hogCPU();
 				move_back(moveTime);
 				move_left(200);
-				front_count += 1;
+				boundary_count += 1;
 				releaseCPU();
 			}
 			if (SensorValue[backLeft] == 0 && depositionOn == 0)
@@ -769,7 +800,7 @@ task line_detection()
 				hogCPU();
 				move_forward(moveTime);
 				move_right(200);
-				back_count += 1;
+				boundary_count += 1;
 				releaseCPU();
 			}
 			if (SensorValue[backRight] == 0 && depositionOn == 0)
@@ -777,7 +808,7 @@ task line_detection()
 				hogCPU();
 				move_forward(moveTime);
 				move_left(200);
-				back_count += 1;
+				boundary_count += 1;
 				releaseCPU();
 			}
 		}
@@ -867,8 +898,12 @@ task ball_deposition()
 				orientSouth();
 				move_back(10);
 				stopMC();
+				SensorValue[encoder] = 0;
 				deposit();
-				delay(2000);
+				depositionOn = 0;
+		//				 startTask(line_detection);
+		//startTask(ball_deposition);
+				move_forward(4000);
 				break;
 			}
 			if (SensorValue[backLeft] == 0 && back_dist > 10)
@@ -881,31 +916,37 @@ task ball_deposition()
 				move_forward(500);
 				orientSouth();
 			}
+			// to try to put deposit here
+
 			move_back(10);
 		}
 
-		depositionOn = 0;
 		no_of_balls_collected++;
 		// release ball depending on servo or motor
-		//move_forward(2000);
 		releaseCPU();
 	}
 }
 
 task main()
 {
+	//move_right_search(5000);
+	//clockwise_circular_search_right(2500);
+		move_forward(5000);
+		//		 startTask(line_detection);
+		//startTask(ball_deposition);
 	while (true)
 	{
+
 		 startTask(line_detection);
 		startTask(ball_deposition);
-		move_forward(4000);
-		clockwise_circular_search_right(2500);
-		move_left(100);
-		move_forward(2000);
-		clockwise_circular_search_right(2500);
+		move_forward(5000);
+		clockwise_circular_search_right(4000);
+		move_left(300);
+		move_forward(1000);
+		clockwise_circular_search_right(4000);
 		move_left(300);
 		move_forward(2000);
-		clockwise_circular_search_right(2500);
+		clockwise_circular_search_right(4000);
 		move_left(100);
 		move_forward(2000);
 	}

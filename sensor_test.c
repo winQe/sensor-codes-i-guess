@@ -32,6 +32,7 @@
  int analogValSharpBack = 0;
  float volt = 0;
 
+
 int get_distanceL()
 {
 	int numberOfReadingsToAverage = 20;
@@ -117,12 +118,7 @@ int get_distanceTL()
 
 task main()
 {
-	SensorValue[compassN] = 0;
-	SensorValue[compassE] = 0;
-	SensorValue[compassS] = 0;
-	SensorValue[compassW] = 0;
-	SensorValue[sharpLeft] = 0;
-	SensorValue[sharpTop] = 0;
+SensorValue[encoder] = 0;
 //SensorValue[line_d] = 0;
 	while(1==1){
 	volt = nImmediateBatteryLevel;
