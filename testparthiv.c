@@ -26,7 +26,7 @@
 
 #define FIRST_MOVE_FORWARD_DURATION 4000
 #define RANGE 50
-
+#define NUMBER_OF_READINGS 20
 int depositionOn = 0;
 
 int startRight = 0;
@@ -70,10 +70,9 @@ int read_compass()
 
 int get_distanceL()
 {
-	int numberOfReadingsToAverage = 20;
 	int totalL = 0;
 	int avgL = 0;
-	for (int i = 0; i < numberOfReadingsToAverage; i++)
+	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 
 		int distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
@@ -88,17 +87,17 @@ int get_distanceL()
 		totalL = totalL + distanceL;
 	}
 
-	avgL = totalL / numberOfReadingsToAverage;
+	avgL = totalL / NUMBER_OF_READINGS;
 	return avgL;
 }
 
 int get_distanceR()
 {
-	int numberOfReadingsToAverage = 20;
-	int totalR = 0;
-	int avgR = 0;
+	
+	int counter = 0;
+	int  = 0;
 
-	for (int i = 0; i < numberOfReadingsToAverage; i++)
+	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 
 		int distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
@@ -113,16 +112,15 @@ int get_distanceR()
 		totalR = totalR + distanceR;
 	}
 
-	avgR = totalR / numberOfReadingsToAverage;
+	avgR = totalR / NUMBER_OF_READINGS;
 	return avgR;
 }
 
 int get_distanceTL()
 {
-	int numberOfReadingsToAverage = 20;
 	int totalTL = 0;
 	int avgTL = 0;
-	for (int i = 0; i < numberOfReadingsToAverage; i++)
+	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 
 		int distanceTL = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
@@ -137,16 +135,15 @@ int get_distanceTL()
 		totalTL = totalTL + distanceTL;
 	}
 
-	avgTL = totalTL / numberOfReadingsToAverage;
+	avgTL = totalTL / NUMBER_OF_READINGS;
 	return avgTL;
 }
 
 int get_distanceB()
 {
-	int numberOfReadingsToAverage = 20;
 	int totalB = 0;
 	int avgB = 0;
-	for (int i = 0; i < numberOfReadingsToAverage; i++)
+	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 		int distanceB = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
 		if (distanceB < 4)
@@ -161,7 +158,7 @@ int get_distanceB()
 		totalB = totalB + distanceB;
 	}
 
-	avgB = totalB / numberOfReadingsToAverage;
+	avgB = totalB / NUMBER_OF_READINGS;
 	return avgB;
 }
 
@@ -291,8 +288,13 @@ bool clockwise_circular_search_right(int milliSecond)
 				{
 					for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
 					{
-						if (SensorValue[ballLimit] == 0)
+						if ((tempIndex_ ==1)&&(topDetect()==true)){
+							break;
+						}
+						if (SensorValue[ballLimit] == 0){
 							return true;
+						}
+							
 						move_forward(500);
 					}
 					continue;
@@ -316,6 +318,9 @@ bool clockwise_circular_search_right(int milliSecond)
 			{
 				for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
 					{
+						if ((tempIndex_ ==1)&&(topDetect()==true)){
+							break;
+						}
 						if (SensorValue[ballLimit] == 0)
 							return true;
 						move_forward(500);
@@ -343,6 +348,7 @@ bool clockwise_circular_search_right(int milliSecond)
 				move_left(200);
 				for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
 					{
+						
 						if (SensorValue[ballLimit] == 0)
 							return true;
 						move_forward(500);
