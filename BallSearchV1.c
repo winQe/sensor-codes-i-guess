@@ -24,6 +24,9 @@
 #pragma DebuggerWindows("systemParameters")
 #pragma DebuggerWindows("Sensors")
 
+#define FIRST_MOVE_FORWARD_DURATION 4000
+#define RANGE 50
+
 int depositionOn = 0;
 
 int startRight = 0;
@@ -189,14 +192,12 @@ void move_right_search(int milliSecond)
 void move_forward(int milliSecond)
 {
 	clearTimer(T1);
-
-		motor[rightWheel] = -127;
-		motor[leftWheel] = 90;
 		motor[collectionMotor] = 127;
 
 	while (time1(T1) < milliSecond)
 	{
-		continue;
+		motor[rightWheel] = -127;
+		motor[leftWheel] = 90;
 	}
 	motor[rightWheel] = 0;
 	motor[leftWheel] = 0;
@@ -206,11 +207,10 @@ void move_back(int milliSecond)
 {
 	//to be tuned
 	clearTimer(T1);
-	motor[rightWheel] = 127;
-	motor[leftWheel] = -90;
 	while (time1(T1) < milliSecond)
 	{
-		continue;
+		motor[rightWheel] = 100;
+		motor[leftWheel] = -100;
 	}
 	motor[rightWheel] = 0;
 	motor[leftWheel] = 0;
@@ -219,12 +219,11 @@ void move_back(int milliSecond)
 void move_left(int milliSecond)
 {
 	clearTimer(T1);
-	motor[rightWheel] = -70;
-	motor[leftWheel] = -70;
 
 	while (time1(T1) < milliSecond)
 	{
-		continue;
+		motor[rightWheel] = -70;
+		motor[leftWheel] = -70;
 	}
 	motor[rightWheel] = 0;
 	motor[leftWheel] = 0;
@@ -243,21 +242,20 @@ void stopMC()
 // 1 L TL R
 int sensorDetect()
 {
-	int range = 45;
 	int returnVal = 1000;
 	int avgR = get_distanceR();
 	int avgL = get_distanceL();
 	int avgTL = get_distanceTL();
 	// changing this to avgR instead
-	if ((avgR < range) && (avgR > 10))
+	if ((avgR < RANGE) && (avgR > 10))
 	{
 		returnVal = returnVal + 1;
 	}
-	if ((avgL < range) && (avgL > 10))
+	if ((avgL < RANGE) && (avgL > 10))
 	{
 		returnVal = returnVal + 100;
 	}
-	if ((avgTL < range) && (avgTL > 10))
+	if ((avgTL < RANGE) && (avgTL > 10))
 	{
 		returnVal = returnVal + 10;
 	}
@@ -267,7 +265,7 @@ int sensorDetect()
 bool topDetect()
 {
 	int topval = get_distanceTL();
-	if ((topval < 45) && (topval > 10))
+	if ((topval < RANGE) && (topval > 10))
 		return true;
 	return false;
 }
@@ -424,32 +422,204 @@ void orientNorth()
 	}
 }
 
-void orientEast()
+void orientNorthEast()
 {
-	int value = read_compass();
-	if (value != 4)
-	{
-		if ((value == 12) || (value == 8) || (value == 1) || (value == 9))
-		{
-			// turn right
-			while (value != 4)
-			{
-				move_right(10);
-				value = read_compass();
-			}
-		}
-		else
-		{
-			// turn left
-			while (value != 4)
-			{
-				move_left(10);
-				value = read_compass();
-			}
-		}
-	}
+    int value = read_compass();
+    if (value != 12)
+    {
+        if ((value == 3) || (value == 1) || (value == 9) || (value == 8))
+        {
+            // turn right
+            while (value != 12)
+            {
+                move_right(10);
+                value = read_compass();
+            }
+        }
+        else
+        {
+            // turn left
+            while (value != 12)
+            {
+                move_left(10);
+                value = read_compass();
+            }
+        }
+    }
 }
 
+void orientSouthEast()
+{
+    int value = read_compass();
+    if (value != 6)
+    {
+        if ((value == 12) || (value == 4) || (value == 9) || (value == 8))
+        {
+            // turn right
+            while (value != 6)
+            {
+                move_right(10);
+                value = read_compass();
+            }
+        }
+        else
+        {
+            // turn left
+            while (value != 6)
+            {
+                move_left(10);
+                value = read_compass();
+            }
+        }
+    }
+}
+
+void orientSouthWest()
+{
+    int value = read_compass();
+    if (value != 3)
+    {
+        if ((value == 12) || (value == 4) || (value == 6) || (value == 2))
+        {
+            // turn right
+            while (value != 6)
+            {
+                move_right(10);
+                value = read_compass();
+            }
+        }
+        else
+        {
+            // turn left
+            while (value != 3)
+            {
+                move_left(10);
+                value = read_compass();
+            }
+        }
+    }
+}
+
+void orientNorthWest()
+{
+    int value = read_compass();
+    if (value != 9)
+    {
+        if ((value == 1) || (value == 3) || (value == 6) || (value == 2))
+        {
+            // turn right
+            while (value != 9)
+            {
+                move_right(10);
+                value = read_compass();
+            }
+        }
+        else
+        {
+            // turn left
+            while (value != 9)
+            {
+                move_left(10);
+                value = read_compass();
+            }
+        }
+    }
+}
+
+void orientEast()
+{
+    int value = read_compass();
+    if (value != 4)
+    {
+        if ((value == 12) || (value == 8) || (value == 1) || (value == 9))
+        {
+            // turn right
+            while (value != 4)
+            {
+                move_right(10);
+                value = read_compass();
+            }
+        }
+        else
+        {
+            // turn left
+            while (value != 4)
+            {
+                move_left(10);
+                value = read_compass();
+            }
+        }
+    }
+}
+
+void orientWest()
+{
+    int value = read_compass();
+    if (value != 1)
+    {
+        if ((value == 4) || (value == 6) || (value == 2) || (value == 3))
+        {
+            // turn right
+            while (value != 1)
+            {
+                move_right(10);
+                value = read_compass();
+            }
+        }
+        else
+        {
+            // turn left
+            while (value != 1)
+            {
+                move_left(10);
+                value = read_compass();
+            }
+        }
+    }
+}
+
+void turnOneEighty(){
+    int current_val = read_compass();
+
+    int val_to_reach;
+
+    if(current_val==8){
+        val_to_reach = 2;
+    }else if(current_val==2){
+        val_to_reach = 8;
+    }else if(current_val==12){
+        val_to_reach = 3;
+    }else if(current_val==3){
+        val_to_reach = 12;
+    }else if(current_val==6){
+        val_to_reach = 9;
+    }else if(current_val==9){
+        val_to_reach = 6;
+    }else if(current_val==1){
+        val_to_reach = 4;
+    }else if(current_val==4){
+        val_to_reach = 1;
+    }
+
+    if(val_to_reach==8){
+        orientNorth();
+    }else if (val_to_reach==2){
+        orientSouth();
+    }else if (val_to_reach==12){
+        orientNorthEast();
+    }else if (val_to_reach==3){
+        orientSouthWest();
+    }else if (val_to_reach==6){
+        orientSouthEast();
+    }else if (val_to_reach==9){
+        orientNorthWest();
+    }else if (val_to_reach==1){
+        orientWest();
+    }else if (val_to_reach==4){
+        orientEast();
+    }
+
+}
 
 void deposit()
 {
@@ -489,7 +659,8 @@ task line_detection()
 			{
 				hogCPU();
 				move_back(750);
-				move_right(1200);// Turn 180 degree
+				turnOneEighty();
+				//move_right(1200);// Turn 180 degree
 				releaseCPU();
 				break;
 
@@ -500,7 +671,8 @@ task line_detection()
 
 				hogCPU();
 				move_forward(750);
-				move_right(1200);//Turn 180
+				turnOneEighty();
+				//move_right(1200);//Turn 180
 				releaseCPU();
 				break;
 			}
@@ -563,6 +735,7 @@ task ball_deposition()
 		while (true)
 		{
 			int back_dist = get_distanceB();
+			int timez = 800;
 			if ((SensorValue[backLeft] == 0 || SensorValue[backRight] == 0) && (back_dist <= 10))
 			{
 				orientSouth();
@@ -571,20 +744,24 @@ task ball_deposition()
 				SensorValue[encoder] = 0;
 				deposit();
 				depositionOn = 0;
-				move_forward(4000);
+				move_forward(FIRST_MOVE_FORWARD_DURATION);
 				break;
 			}
 			if (SensorValue[backLeft] == 0 && back_dist > 10)
 			{
-				move_forward(500);
+				move_forward(timez);
 				orientSouth();
 			}
 			if (SensorValue[backRight] == 0 && back_dist > 10)
 			{
-				move_forward(500);
+				move_forward(timez);
 				orientSouth();
 			}
-
+			if ((SensorValue[frontLeft] == 0 || SensorValue[frontRight] == 0) && back_dist > 10)
+			{
+				move_back(timez);
+				orientSouth();
+			}
 			move_back(10);
 		}
 		releaseCPU();
@@ -593,14 +770,14 @@ task ball_deposition()
 
 task main()
 {
+	turnOneEighty();
 
+		//  startTask(line_detection);
+		//  startTask(ball_deposition);
+		//  clockwise_circular_search_right(12000);
+		//  move_forward(FIRST_MOVE_FORWARD_DURATION);
 
-		startTask(line_detection);
-		startTask(ball_deposition);
-		// clockwise_circular_search_right(12000);
-		move_forward(5000);
-
-	while (true)
+	while (false)
 	{
 
 		for (int southCount = 0; southCount<2; southCount++){
