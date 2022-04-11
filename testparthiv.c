@@ -31,6 +31,7 @@ int depositionOn = 0;
 
 int startRight = 0;
 int _sensorDetect;
+int hasMadeEffort = 0;
 
 float volt = 0;
 void orientNorth();
@@ -627,6 +628,7 @@ void turnOneEighty(){
 void deposit()
 {
 	clearTimer(T1);
+	
 	while (SensorValue[encoder] <60 )
 	{
 		motor[depositor] = 30;
@@ -726,9 +728,17 @@ task ball_deposition()
 			if (SensorValue[ballLimit] == 0)
 			{ // Limit switch is pressed
 				depositionOn = 1;
+				// clearTimer(T4);
+				// while (time1(T4)<700){
+				// 	motor[collectionMotor] = 127;
+				// }
+				// motor[collectionMotor] = 0;
 			}
 		}
-		
+		clearTimer(T1);
+		while (time1(T1)<2000){
+			motor[collectionMotor] = -127;
+		}
 		motor[collectionMotor] = 0;
 		hogCPU();
 		// first orient the robot to face South
@@ -773,14 +783,13 @@ task ball_deposition()
 
 task main()
 {
-	// turnOneEighty();
 
-		 startTask(line_detection);
+		// startTask(line_detection);
 		 startTask(ball_deposition);
 		//  clockwise_circular_search_right(12000);
 		 move_forward(FIRST_MOVE_FORWARD_DURATION);
 
-	while (true)
+	while (false)
 	{
 
 		for (int southCount = 0; southCount<2; southCount++){
