@@ -27,7 +27,6 @@
 int depositionOn = 0;
 
 int startRight = 0;
-int no_of_balls_collected = 0;
 int _sensorDetect;
 
 float volt = 0;
@@ -63,33 +62,6 @@ int west[3] = {1, 3, 9};
 int read_compass()
 {
 	return !SensorValue[compassN] * 8 + !SensorValue[compassE] * 4 + !SensorValue[compassS] * 2 + !SensorValue[compassW] * 1;
-}
-
-int read_remap_compass()
-{
-	int origCompass = read_compass();
-	switch (origCompass)
-	{
-	case (8):
-		return 8;
-	case 12:
-		return 1;
-	case 4:
-		return 2;
-	case 6:
-		return 3;
-	case 2:
-		return 4;
-	case 3:
-		return 5;
-	case 1:
-		return 6;
-	case 9:
-		return 7;
-	default:
-		return -1;
-	}
-	return -1;
 }
 
 int get_distanceL()
@@ -218,11 +190,13 @@ void move_forward(int milliSecond)
 {
 	clearTimer(T1);
 
+		motor[rightWheel] = -127;
+		motor[leftWheel] = 90;
+		motor[collectionMotor] = 127;
+
 	while (time1(T1) < milliSecond)
 	{
-		motor[rightWheel] = -120;
-		motor[leftWheel] = 110;
-		motor[collectionMotor] = 127;
+		continue;
 	}
 	motor[rightWheel] = 0;
 	motor[leftWheel] = 0;
@@ -230,12 +204,13 @@ void move_forward(int milliSecond)
 
 void move_back(int milliSecond)
 {
+	//to be tuned
 	clearTimer(T1);
-
+	motor[rightWheel] = 127;
+	motor[leftWheel] = -90;
 	while (time1(T1) < milliSecond)
 	{
-		motor[rightWheel] = 120;
-		motor[leftWheel] = -110;
+		continue;
 	}
 	motor[rightWheel] = 0;
 	motor[leftWheel] = 0;
@@ -244,10 +219,12 @@ void move_back(int milliSecond)
 void move_left(int milliSecond)
 {
 	clearTimer(T1);
+	motor[rightWheel] = -70;
+	motor[leftWheel] = -70;
+
 	while (time1(T1) < milliSecond)
 	{
-		motor[rightWheel] = -70;
-		motor[leftWheel] = -70;
+		continue;
 	}
 	motor[rightWheel] = 0;
 	motor[leftWheel] = 0;
@@ -259,22 +236,14 @@ void stopMC()
 	motor[leftWheel] = 0;
 }
 
-void collection_on()
-{
-	motor[collectionMotor] = 127;
-}
 
-void collection_off()
-{
-	motor[collectionMotor] = 0;
-}
 
 //***********
 
 // 1 L TL R
 int sensorDetect()
 {
-	int range = 40;
+	int range = 45;
 	int returnVal = 1000;
 	int avgR = get_distanceR();
 	int avgL = get_distanceL();
@@ -298,124 +267,8 @@ int sensorDetect()
 bool topDetect()
 {
 	int topval = get_distanceTL();
-	if ((topval < 40) && (topval > 10))
+	if ((topval < 45) && (topval > 10))
 		return true;
-	return false;
-}
-
-void robot_detected()
-{
-}
-
-bool clockwise_circular_search_right_compass2()
-{
-	int currentCompassVal = -10;
-	int initCompassVal = read_remap_compass();
-	int _sensorDetect = sensorDetect();
-	while (((initCompassVal == currentCompassVal - 1) || (initCompassVal == currentCompassVal - 2)) && (_sensorDetect == 1000))
-	{
-		move_right(5);
-		// sleep(100);
-		_sensorDetect = sensorDetect();
-		currentCompassVal = read_remap_compass();
-	}
-	if (_sensorDetect != 1000)
-	{
-		return false;
-	}
-	return true;
-}
-
-bool clockwise_circular_search_right_compass()
-{
-	int newvalue = -10;			  // value after move right
-	int ogvalue = read_compass(); // original value
-	move_right(200);
-	while (newvalue != ogvalue)
-	{
-		newvalue = read_compass(); // after move right
-		_sensorDetect = sensorDetect();
-		// 1 Left Top Right
-		if (_sensorDetect == 1001)
-		{
-			move_right(5);
-			// _sensorDetect = sensorDetect();
-			// if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){ //Top doesn't detect
-			if (topDetect() == false)
-			{
-				// move_right(5);
-				// collection_on();
-				clearTimer(T4);
-				while (time1(T4) < 2000)
-				{
-					if (SensorValue[ballLimit] == 0)
-						return true;
-					move_forward(50);
-				}
-				continue;
-			}
-			else
-				continue; // top has detected
-			// detect with right routine ends here
-		}
-		else if (_sensorDetect == 1100)
-		{
-			// detected with left
-			move_left(200);
-			// if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){
-			if (topDetect() == false)
-			{
-				// collection_on();
-				move_forward(2000);
-				return true;
-			}
-			else
-				continue; // top has detected
-			// detect with left ends here
-		}
-		else if (_sensorDetect == 1101)
-		{
-			// left and right detect
-			switch (read_compass())
-			{
-			case 2:
-			case 3:
-			case 6:
-				move_back(750);
-				orientNorth();
-				break;
-			default:
-				move_left(200);
-				if (topDetect() == false)
-				{
-					// collection_on();
-					move_forward(2000);
-					return true;
-				}
-				// top has detected
-				break;
-			}
-		}
-		// detect with l and r both done
-		move_right(5);
-	}
-	int exit_search = 0;
-	while (true)
-	{
-		switch (sensorDetect())
-		{
-		case 1110:
-		case 1011:
-		case 1111:
-			move_right(10);
-			break;
-		default:
-			exit_search = 1;
-			break;
-		}
-		if (exit_search == 1)
-			break;
-	}
 	return false;
 }
 
@@ -429,22 +282,11 @@ bool clockwise_circular_search_right(int milliSecond)
 		// 1 Left Top Right
 		if (_sensorDetect == 1001)
 		{
-			//stopMC();
-			//sleep(500);
 			if (sensorDetect() == _sensorDetect)
 			{
 				move_right(5);
-				// _sensorDetect = sensorDetect();
-				// if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){ //Top doesn't detect
 				if (topDetect() == false)
 				{
-					// move_right(5);
-					// collection_on();
-					/*clearTimer(T4);
-					while (time1(T4) < 2000){
-						if (SensorValue[ballLimit] == 0) return true;
-						move_forward(500);}*/
-
 					for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
 					{
 						if (SensorValue[ballLimit] == 0)
@@ -465,150 +307,68 @@ bool clockwise_circular_search_right(int milliSecond)
 		}
 		else if (_sensorDetect == 1100)
 		{
-			// detected with left
-			move_left(200);
-			// if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){
+			if (sensorDetect() == _sensorDetect){
+				// detected with left
+				move_left(200);
 			if (topDetect() == false)
 			{
-				// collection_on();
-				move_forward(2000);
-				return true;
+				for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
+					{
+						if (SensorValue[ballLimit] == 0)
+							return true;
+						move_forward(500);
+					}
+					continue;
 			}
 			else
 				continue; // top has detected
 			// detect with left ends here
-		}
-		else if (_sensorDetect == 1101)
-		{
-			// left and right detect
-			switch (read_compass())
-			{
-			case 2:
-			case 3:
-			case 6:
-				move_back(750);
-				orientNorth();
-				break;
-			default:
-				move_left(200);
-				if (topDetect() == false)
-				{
-					// collection_on();
-					move_forward(2000);
-					return true;
-				}
-				// top has detected
-				break;
 			}
-		}
-		// detect with l and r both done
-	}
-	int exit_search = 0;
-	while (true)
-	{
-		switch (sensorDetect())
-		{
-		case 1110:
-		case 1011:
-		case 1111:
-			move_right(10);
-			break;
-		default:
-			exit_search = 1;
-			break;
-		}
-		if (exit_search == 1)
-			break;
-	}
-	return false;
-}
 
-bool clockwise_circular_search_left(int milliSecond)
-{
-	clearTimer(T2);
-	while (time1(T2) < milliSecond)
-	{
-		_sensorDetect = sensorDetect();
-		// 1 Left Top Right
-		if (_sensorDetect == 1001)
-		{
-			move_right(5);
-			_sensorDetect = sensorDetect();
-			if (topDetect() == false)
-			{
-				// move_right(5);
-				// collection_on();
-				clearTimer(T4);
-				while (time1(T4) < 2000)
-				{
-					if (SensorValue[ballLimit] == 0)
-						return true;
-					move_forward(50);
-				}
-				continue;
-			}
-			else
-				deposit(); // top has detected
-			// detect with right routine ends here
-		}
-		else if (_sensorDetect == 1100)
-		{
-			// detected with left
-			move_left(200);
-			// if (((_sensorDetect-(_sensorDetect%10))/10)%10 == 0){
-			if (topDetect() == false)
-			{
-				// collection_on();
-				move_forward(2000);
-				return true;
-			}
-			// detect with left ends here
 		}
 		else if (_sensorDetect == 1101)
 		{
 			// left and right detect
 			switch (read_compass())
 			{
-			case 2:
-			case 3:
-			case 6:
+			case 8:
+			case 12:
+			case 9:
 				move_back(750);
-				orientNorth();
+				orientSouth();
 				break;
 			default:
 				move_left(200);
-				if (topDetect() == false)
-				{
-					// collection_on();
-					move_forward(2000);
-					return true;
-				}
-				else
-					deposit(); // top has detected
-				break;
+				for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
+					{
+						if (SensorValue[ballLimit] == 0)
+							return true;
+						move_forward(500);
+					}
+					continue;
+
 			}
 		}
 		// detect with l and r both done
-		move_left(15);
 	}
-	int exit_search = 0;
-	while (true)
-	{
-		switch (sensorDetect())
-		{
-		case 1110:
-		case 1011:
-		case 1111:
-			move_right(10);
-			break;
-		default:
-			exit_search = 1;
-			break;
-		}
-		if (exit_search == 1)
-			break;
-	}
-	return false;
+// 	int exit_search = 0;
+// 	while (true)
+// 	{
+// 		switch (sensorDetect())
+// 		{
+// 		case 1110:
+// 		case 1011:
+// 		case 1111:
+// 			move_right(10);
+// 			break;
+// 		default:
+// 			exit_search = 1;
+// 			break;
+// 		}
+// 		if (exit_search == 1)
+// 			break;
+// 	}
+ 	return false;
 }
 
 void orientSouth()
@@ -637,19 +397,6 @@ void orientSouth()
 	}
 }
 
-void orientSouthNewFn()
-{
-	int value = read_compass();
-	if (value != 2)
-	{
-		while (value != 2)
-		{
-			move_right(10);
-			value = read_compass();
-		}
-	}
-	move_left(200);
-}
 
 void orientNorth()
 {
@@ -703,31 +450,11 @@ void orientEast()
 	}
 }
 
-// void deposit()
-// {
-// 	clearTimer(T1);
-// 	while(time1(T1)<2000)
-// 	{
-// 		motor[collectionMotor] = 127;
-// 	}
-// 	motor[collectionMotor] = 0;
-// 	while (SensorValue[encoder] > -100)
-// 	{
-// 		motor[depositor] = -30;
-// 	}
-// 	motor[depositor] = 0;
-// 	delay(2000);
-// 	while (SensorValue[encoder] < -66)
-// 	{
-// 		motor[depositor] = 25;
-// 	}
-// 	motor[depositor] = 0;
-// }
 
 void deposit()
 {
 	clearTimer(T1);
-	while (SensorValue[encoder] <45 )
+	while (SensorValue[encoder] <60 )
 	{
 		motor[depositor] = 30;
 	}
@@ -745,7 +472,7 @@ void deposit()
 	{
 		motor[depositor] = 20;
 	}
-			motor[depositor] = 0;
+	motor[depositor] = 0;
 }
 
 task line_detection()
@@ -760,10 +487,9 @@ task line_detection()
 		{
 			if (boundary_count >= 2 && (SensorValue[frontLeft] == 0 || SensorValue[frontRight] == 0 ))
 			{
-
 				hogCPU();
 				move_back(750);
-				move_right(1200);
+				move_right(1200);// Turn 180 degree
 				releaseCPU();
 				break;
 
@@ -774,7 +500,7 @@ task line_detection()
 
 				hogCPU();
 				move_forward(750);
-				move_right(1200);
+				move_right(1200);//Turn 180
 				releaseCPU();
 				break;
 			}
@@ -815,61 +541,6 @@ task line_detection()
 	}
 }
 
-void first_ball_path()
-{
-	move_forward(3000); // tune this to 2/3
-
-	if (startRight == 1)
-	{
-		while (true)
-		{
-			// if right limit switch pressed
-			clockwise_circular_search_left(500); // tune this to do a >90 degree turn and search
-			orientNorth();
-			move_forward(500);
-		}
-	}
-	else
-	{
-		while (true)
-		{
-			// if left limit switch pressed
-			clockwise_circular_search_right(500); // tune this to do a >90 degree turn and search
-			orientNorth();
-			move_forward(500);
-		}
-	}
-}
-
-void diamond_path()
-{
-	/*	switch(no_of_balls_collected){
-			case 5:
-			first_ball_path();
-			break;
-			default:*/
-
-	// move_right(100);
-	move_forward(2000);
-	clockwise_circular_search_right(2500);
-	move_left(100);
-	move_forward(2000);
-	clockwise_circular_search_right(2500);
-	move_left(300);
-	move_forward(2000);
-	clockwise_circular_search_right(2500);
-	move_left(100);
-	move_forward(2000);
-}
-
-void test_path()
-{
-	// collection_on();
-	// move_forward(5000);
-	clockwise_circular_search_right(12500);
-	// move_right_with_collection(2000);
-	// delivery();
-}
 
 task ball_deposition()
 {
@@ -882,8 +553,7 @@ task ball_deposition()
 				depositionOn = 1;
 			}
 		}
-		// motor[collectionMotor] = -127;
-		// delay(1000);
+
 		motor[collectionMotor] = 0;
 		hogCPU();
 		// first orient the robot to face South
@@ -896,13 +566,11 @@ task ball_deposition()
 			if ((SensorValue[backLeft] == 0 || SensorValue[backRight] == 0) && (back_dist <= 10))
 			{
 				orientSouth();
-				move_back(10);
+				move_back(50);
 				stopMC();
 				SensorValue[encoder] = 0;
 				deposit();
 				depositionOn = 0;
-		//				 startTask(line_detection);
-		//startTask(ball_deposition);
 				move_forward(4000);
 				break;
 			}
@@ -916,41 +584,39 @@ task ball_deposition()
 				move_forward(500);
 				orientSouth();
 			}
-			// to try to put deposit here
 
 			move_back(10);
 		}
-
-		no_of_balls_collected++;
-		// release ball depending on servo or motor
 		releaseCPU();
 	}
 }
 
 task main()
 {
-	//move_right_search(5000);
-	//clockwise_circular_search_right(2500);
+
+
+		startTask(line_detection);
+		startTask(ball_deposition);
+		// clockwise_circular_search_right(12000);
 		move_forward(5000);
-		//		 startTask(line_detection);
-		//startTask(ball_deposition);
+
 	while (true)
 	{
 
-		 startTask(line_detection);
-		startTask(ball_deposition);
-		move_forward(5000);
-		clockwise_circular_search_right(4000);
-		move_left(300);
-		move_forward(1000);
-		clockwise_circular_search_right(4000);
-		move_left(300);
-		move_forward(2000);
-		clockwise_circular_search_right(4000);
-		move_left(100);
-		move_forward(2000);
+		for (int southCount = 0; southCount<2; southCount++){
+			orientSouth();
+			move_forward(2000);
+			clockwise_circular_search_right(4000);
+
+		}
+
+		for (int northCount = 0; northCount<2; northCount++){
+			orientNorth();
+			move_forward(2000);
+			clockwise_circular_search_right(4000);
+		}
+
+
+
 	}
-	//	//test_path();
-	//	//clockwise_circular_search_right(2500);
-	//}
 }
