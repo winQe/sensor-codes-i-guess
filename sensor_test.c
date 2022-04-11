@@ -24,14 +24,13 @@
 #pragma DebuggerWindows("systemParameters")
 #pragma DebuggerWindows("Sensors")
 
-#define FIRST_MOVE_FORWARD_DURATION 4000
+#define FIRST_MOVE_FORWARD_DURATION 3000
 #define RANGE 50
 #define NUMBER_OF_READINGS 20
 int depositionOn = 0;
 
 int startRight = 0;
 int _sensorDetect;
-int hasMadeEffort = 0;
 
 float volt = 0;
 void orientNorth();
@@ -741,12 +740,12 @@ task ball_deposition()
 				// motor[collectionMotor] = 0;
 			}
 		}
-		clearTimer(T1);
-		while (time1(T1)<2000){
+		hogCPU();
+		clearTimer(T4);
+		while (time1(T4)<2000){
 			motor[collectionMotor] = -127;
 		}
 		motor[collectionMotor] = 0;
-		hogCPU();
 		// first orient the robot to face South
 		orientSouth();
 		// then move back till short sensor gives a particular value
