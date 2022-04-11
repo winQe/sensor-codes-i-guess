@@ -96,6 +96,7 @@ int get_distanceR()
 	int numberOfReadingsToAverage = 20;
 	int totalR = 0;
 	int avgR = 0;
+
 	for (int i = 0; i < numberOfReadingsToAverage; i++)
 	{
 
@@ -247,10 +248,12 @@ int sensorDetect()
 	int avgL = get_distanceL();
 	int avgTL = get_distanceTL();
 	// changing this to avgR instead
-	if ((avgR < RANGE) && (avgR > 10))
-	{
-		returnVal = returnVal + 1;
-	}
+	// if ((avgR < RANGE) && (avgR > 10))
+	// {
+	// 	returnVal = returnVal + 1;
+	// }
+
+	
 	if ((avgL < RANGE) && (avgL > 10))
 	{
 		returnVal = returnVal + 100;
@@ -653,7 +656,7 @@ task line_detection()
 		clearTimer(T3);
 		int boundary_count = 0;
 
-		while (time1(T3) < 6000)
+		while (time1(T3) < 8000)
 		{
 			if (boundary_count >= 2 && (SensorValue[frontLeft] == 0 || SensorValue[frontRight] == 0 ))
 			{
@@ -681,7 +684,7 @@ task line_detection()
 			{
 				hogCPU();
 				move_back(moveTime);
-				move_right(200);
+				move_right(300);
 				boundary_count += 1;
 				releaseCPU();
 			}
@@ -689,7 +692,7 @@ task line_detection()
 			{
 				hogCPU();
 				move_back(moveTime);
-				move_left(200);
+				move_left(300);
 				boundary_count += 1;
 				releaseCPU();
 			}
@@ -697,7 +700,7 @@ task line_detection()
 			{
 				hogCPU();
 				move_forward(moveTime);
-				move_right(200);
+				move_right(300);
 				boundary_count += 1;
 				releaseCPU();
 			}
@@ -705,7 +708,7 @@ task line_detection()
 			{
 				hogCPU();
 				move_forward(moveTime);
-				move_left(200);
+				move_left(300);
 				boundary_count += 1;
 				releaseCPU();
 			}
@@ -770,14 +773,14 @@ task ball_deposition()
 
 task main()
 {
-	turnOneEighty();
+	// turnOneEighty();
 
-		//  startTask(line_detection);
-		//  startTask(ball_deposition);
-		 clockwise_circular_search_right(12000);
-		//  move_forward(FIRST_MOVE_FORWARD_DURATION);
+		 startTask(line_detection);
+		 startTask(ball_deposition);
+		//  clockwise_circular_search_right(12000);
+		 move_forward(FIRST_MOVE_FORWARD_DURATION);
 
-	while (false)
+	while (true)
 	{
 
 		for (int southCount = 0; southCount<2; southCount++){
