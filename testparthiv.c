@@ -24,14 +24,13 @@
 #pragma DebuggerWindows("systemParameters")
 #pragma DebuggerWindows("Sensors")
 
-#define FIRST_MOVE_FORWARD_DURATION 4000
+#define FIRST_MOVE_FORWARD_DURATION 3000
 #define RANGE 50
 #define NUMBER_OF_READINGS 20
 int depositionOn = 0;
 
 int startRight = 0;
 int _sensorDetect;
-int hasMadeEffort = 0;
 
 float volt = 0;
 void orientNorth();
@@ -742,8 +741,8 @@ task ball_deposition()
 			}
 		}
 		hogCPU();
-		clearTimer(T1);
-		while (time1(T1)<2000){
+		clearTimer(T4);
+		while (time1(T4)<2000){
 			motor[collectionMotor] = -127;
 		}
 		motor[collectionMotor] = 0;
@@ -751,6 +750,7 @@ task ball_deposition()
 		orientSouth();
 		// then move back till short sensor gives a particular value
 		// disable line detection
+		int delivery_counter = 0;
 		while (true)
 		{
 			int back_dist = get_distanceB();
@@ -781,7 +781,9 @@ task ball_deposition()
 				move_back(timez);
 				orientSouth();
 			}
+			if (delivery_counter % 200 == 0) orientSouth();
 			move_back(10);
+			delivery_counter++;
 		}		
 		releaseCPU();
 	}
