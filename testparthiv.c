@@ -25,10 +25,8 @@
 #pragma DebuggerWindows("Sensors")
 
 #define FIRST_MOVE_FORWARD_DURATION 4000
-#define RANGE 60
+#define RANGE 50
 #define NUMBER_OF_READINGS 20
-#define THRESHOLD 15
-
 int depositionOn = 0;
 
 int startRight = 0;
@@ -71,9 +69,11 @@ int read_compass()
 
 int get_distanceL()
 {
-	int counter = 0;
+	int totalL = 0;
+	int avgL = 0;
 	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
+
 		int distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
 		if (distanceL < 10)
 		{
@@ -83,15 +83,19 @@ int get_distanceL()
 		{
 			distanceL = 80;
 		}
-		if (distanceL < 60) counter++;
+		totalL = totalL + distanceL;
 	}
 
-	return counter;
+	avgL = totalL / NUMBER_OF_READINGS;
+	return avgL;
 }
 
 int get_distanceR()
 {
+	
 	int counter = 0;
+	int  = 0;
+
 	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 
@@ -104,14 +108,17 @@ int get_distanceR()
 		{
 			distanceR = 80;
 		}
-		if (distanceR < 60) counter++;
+		totalR = totalR + distanceR;
 	}
-	return counter;
+
+	avgR = totalR / NUMBER_OF_READINGS;
+	return avgR;
 }
 
 int get_distanceTL()
 {
-	int counter = 0;
+	int totalTL = 0;
+	int avgTL = 0;
 	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 
@@ -124,9 +131,11 @@ int get_distanceTL()
 		{
 			distanceTL = 80;
 		}
-		if (distanceTL<60) counter++;
+		totalTL = totalTL + distanceTL;
 	}
-	return counter;
+
+	avgTL = totalTL / NUMBER_OF_READINGS;
+	return avgTL;
 }
 
 int get_distanceB()
@@ -236,16 +245,17 @@ int sensorDetect()
 	int avgL = get_distanceL();
 	int avgTL = get_distanceTL();
 	// changing this to avgR instead
-	if (avgR >= THRESHOLD)
-	{
-		returnVal = returnVal + 1;
-	}
+	// if ((avgR < RANGE) && (avgR > 10))
+	// {
+	// 	returnVal = returnVal + 1;
+	// }
 
-	if (avgL >= THRESHOLD)
+	
+	if ((avgL < RANGE) && (avgL > 10))
 	{
 		returnVal = returnVal + 100;
 	}
-	if (avgL >= THRESHOLD)
+	if ((avgTL < RANGE) && (avgTL > 10))
 	{
 		returnVal = returnVal + 10;
 	}
@@ -255,7 +265,7 @@ int sensorDetect()
 bool topDetect()
 {
 	int topval = get_distanceTL();
-	if (topval >= THRESHOLD)
+	if ((topval < RANGE) && (topval > 10))
 		return true;
 	return false;
 }
