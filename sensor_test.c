@@ -26,11 +26,12 @@
 
 #define FIRST_MOVE_FORWARD_DURATION 4000
 #define RANGE 50
-
+#define NUMBER_OF_READINGS 20
 int depositionOn = 0;
 
 int startRight = 0;
 int _sensorDetect;
+int hasMadeEffort = 0;
 
 float volt = 0;
 void orientNorth();
@@ -69,10 +70,9 @@ int read_compass()
 
 int get_distanceL()
 {
-	int numberOfReadingsToAverage = 20;
 	int totalL = 0;
 	int avgL = 0;
-	for (int i = 0; i < numberOfReadingsToAverage; i++)
+	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 
 		int distanceL = 29.988 * pow(SensorValue[sharpLeft], -1.173) * 1000 * 5 / 2;
@@ -87,17 +87,17 @@ int get_distanceL()
 		totalL = totalL + distanceL;
 	}
 
-	avgL = totalL / numberOfReadingsToAverage;
+	avgL = totalL / NUMBER_OF_READINGS;
 	return avgL;
 }
 
 int get_distanceR()
 {
-	int numberOfReadingsToAverage = 20;
+
 	int totalR = 0;
 	int avgR = 0;
 
-	for (int i = 0; i < numberOfReadingsToAverage; i++)
+	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 
 		int distanceR = 29.988 * pow(SensorValue[sharpRight], -1.173) * 1000 * 5 / 2;
@@ -112,16 +112,15 @@ int get_distanceR()
 		totalR = totalR + distanceR;
 	}
 
-	avgR = totalR / numberOfReadingsToAverage;
+	avgR = totalR / NUMBER_OF_READINGS;
 	return avgR;
 }
 
 int get_distanceTL()
 {
-	int numberOfReadingsToAverage = 20;
 	int totalTL = 0;
 	int avgTL = 0;
-	for (int i = 0; i < numberOfReadingsToAverage; i++)
+	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 
 		int distanceTL = 29.988 * pow(SensorValue[sharpTop], -1.173) * 1000 * 5 / 2;
@@ -136,16 +135,15 @@ int get_distanceTL()
 		totalTL = totalTL + distanceTL;
 	}
 
-	avgTL = totalTL / numberOfReadingsToAverage;
+	avgTL = totalTL / NUMBER_OF_READINGS;
 	return avgTL;
 }
 
 int get_distanceB()
 {
-	int numberOfReadingsToAverage = 20;
 	int totalB = 0;
 	int avgB = 0;
-	for (int i = 0; i < numberOfReadingsToAverage; i++)
+	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
 		int distanceB = 12.08 * pow(SensorValue[sharpShort], -1.058) * 1000 * 5 / 4;
 		if (distanceB < 4)
@@ -160,7 +158,7 @@ int get_distanceB()
 		totalB = totalB + distanceB;
 	}
 
-	avgB = totalB / numberOfReadingsToAverage;
+	avgB = totalB / NUMBER_OF_READINGS;
 	return avgB;
 }
 
@@ -290,8 +288,13 @@ bool clockwise_circular_search_right(int milliSecond)
 				{
 					for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
 					{
-						if (SensorValue[ballLimit] == 0)
+						if ((tempIndex_ ==1)&&(topDetect()==true)){
+							break;
+						}
+						if (SensorValue[ballLimit] == 0){
 							return true;
+						}
+
 						move_forward(500);
 					}
 					continue;
@@ -315,6 +318,9 @@ bool clockwise_circular_search_right(int milliSecond)
 			{
 				for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
 					{
+						if ((tempIndex_ ==1)&&(topDetect()==true)){
+							break;
+						}
 						if (SensorValue[ballLimit] == 0)
 							return true;
 						move_forward(500);
@@ -342,6 +348,7 @@ bool clockwise_circular_search_right(int milliSecond)
 				move_left(200);
 				for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
 					{
+
 						if (SensorValue[ballLimit] == 0)
 							return true;
 						move_forward(500);
@@ -727,11 +734,15 @@ task ball_deposition()
 			if (SensorValue[ballLimit] == 0)
 			{ // Limit switch is pressed
 				depositionOn = 1;
-
+				// clearTimer(T4);
+				// while (time1(T4)<700){
+				// 	motor[collectionMotor] = 127;
+				// }
+				// motor[collectionMotor] = 0;
 			}
 		}
-		clearTimer(T4);
-		while(time1(T4)<2000){
+		clearTimer(T1);
+		while (time1(T1)<2000){
 			motor[collectionMotor] = -127;
 		}
 		motor[collectionMotor] = 0;
@@ -779,12 +790,12 @@ task ball_deposition()
 task main()
 {
 
-		// startTask(line_detection);
+		startTask(line_detection);
 		 startTask(ball_deposition);
 		//  clockwise_circular_search_right(12000);
 		 move_forward(FIRST_MOVE_FORWARD_DURATION);
 
-	while (false)
+	while (true)
 	{
 
 		for (int southCount = 0; southCount<2; southCount++){

@@ -94,8 +94,8 @@ int get_distanceL()
 int get_distanceR()
 {
 	
-	int counter = 0;
-	int  = 0;
+	int totalR = 0;
+	int avgR = 0;
 
 	for (int i = 0; i < NUMBER_OF_READINGS; i++)
 	{
@@ -741,12 +741,12 @@ task ball_deposition()
 				// motor[collectionMotor] = 0;
 			}
 		}
+		hogCPU();
 		clearTimer(T1);
 		while (time1(T1)<2000){
 			motor[collectionMotor] = -127;
 		}
 		motor[collectionMotor] = 0;
-		hogCPU();
 		// first orient the robot to face South
 		orientSouth();
 		// then move back till short sensor gives a particular value
@@ -790,12 +790,12 @@ task ball_deposition()
 task main()
 {
 
-		// startTask(line_detection);
+		startTask(line_detection);
 		 startTask(ball_deposition);
 		//  clockwise_circular_search_right(12000);
 		 move_forward(FIRST_MOVE_FORWARD_DURATION);
 
-	while (false)
+	while (true)
 	{
 
 		for (int southCount = 0; southCount<2; southCount++){
