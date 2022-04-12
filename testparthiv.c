@@ -755,10 +755,11 @@ task ball_deposition()
 		{
 			int back_dist = get_distanceB();
 			int timez = 800;
-			if ((SensorValue[backLeft] == 0 || SensorValue[backRight] == 0) && (back_dist <= 10))
+			int depositionThreshold = 10;
+			if ((SensorValue[backLeft] == 0 || SensorValue[backRight] == 0) && (back_dist <= depositionThreshold))
 			{
 				orientSouth();
-				move_back(50);
+				move_back(80);
 				stopMC();
 				SensorValue[encoder] = 0;
 				deposit();
@@ -766,23 +767,24 @@ task ball_deposition()
 				move_forward(FIRST_MOVE_FORWARD_DURATION);
 				break;
 			}
-			if (SensorValue[backLeft] == 0 && back_dist > 10)
+			if (SensorValue[backLeft] == 0 && back_dist > depositionThreshold)
 			{
 				move_forward(timez);
 				orientSouth();
 			}
-			if (SensorValue[backRight] == 0 && back_dist > 10)
+			if (SensorValue[backRight] == 0 && back_dist > depositionThreshold)
 			{
 				move_forward(timez);
 				orientSouth();
 			}
-			if ((SensorValue[frontLeft] == 0 || SensorValue[frontRight] == 0) && back_dist > 10)
+			if ((SensorValue[frontLeft] == 0 || SensorValue[frontRight] == 0) && back_dist > depositionThreshold)
 			{
 				move_back(timez);
 				orientSouth();
 			}
 			if (delivery_counter % 200 == 0) {
 
+				move_forward(10);
 				orientSouth();
 			}
 			move_back(10);
@@ -813,9 +815,9 @@ task main()
 
 		}
 
-		for (int northCount = 0; northCount<2; northCount++){
+		for (int northCount = 0; northCount<1; northCount++){
 			orientNorth();
-			move_forward(2000);
+			move_forward(2500);
 			clockwise_circular_search_right(4000);
 		}
 
