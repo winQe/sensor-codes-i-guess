@@ -27,9 +27,8 @@
 #define FIRST_MOVE_FORWARD_DURATION 3000
 #define RANGE 50
 #define NUMBER_OF_READINGS 20
-int depositionOn = 0;
 
-int startRight = 0;
+int depositionOn = 0;
 int _sensorDetect;
 
 float volt = 0;
@@ -92,7 +91,7 @@ int get_distanceL()
 
 int get_distanceR()
 {
-	
+
 	int totalR = 0;
 	int avgR = 0;
 
@@ -250,7 +249,7 @@ int sensorDetect()
 	// 	returnVal = returnVal + 1;
 	// }
 
-	
+
 	if ((avgL < RANGE) && (avgL > 10))
 	{
 		returnVal = returnVal + 100;
@@ -293,7 +292,7 @@ bool clockwise_circular_search_right(int milliSecond)
 						if (SensorValue[ballLimit] == 0){
 							return true;
 						}
-							
+
 						move_forward(500);
 					}
 					continue;
@@ -330,7 +329,7 @@ bool clockwise_circular_search_right(int milliSecond)
 				continue; // top has detected
 			// detect with left ends here
 			}
-			
+
 		}
 		else if (_sensorDetect == 1101)
 		{
@@ -347,13 +346,13 @@ bool clockwise_circular_search_right(int milliSecond)
 				move_left(200);
 				for (int tempIndex_ = 0; tempIndex_ < 4; tempIndex_++)
 					{
-						
+
 						if (SensorValue[ballLimit] == 0)
 							return true;
 						move_forward(500);
 					}
 					continue;
-				
+
 			}
 		}
 		// detect with l and r both done
@@ -591,7 +590,7 @@ void turnOneEighty(){
     int current_val = read_compass();
 
     int val_to_reach;
-    
+
     if(current_val==8){
         val_to_reach = 2;
     }else if(current_val==2){
@@ -627,13 +626,13 @@ void turnOneEighty(){
     }else if (val_to_reach==4){
         orientEast();
     }
-    
+
 }
 
 void deposit()
 {
 	clearTimer(T1);
-	
+
 	while (SensorValue[encoder] <60 )
 	{
 		motor[depositor] = 30;
@@ -668,7 +667,7 @@ task line_detection()
 			if (boundary_count >= 2 && (SensorValue[frontLeft] == 0 || SensorValue[frontRight] == 0 ))
 			{
 				hogCPU();
-				move_back(750);
+				move_back(500);
 				turnOneEighty();
 				//move_right(1200);// Turn 180 degree
 				releaseCPU();
@@ -680,44 +679,44 @@ task line_detection()
 			{
 
 				hogCPU();
-				move_forward(750);
+				move_forward(500);
 				turnOneEighty();
 				//move_right(1200);//Turn 180
 				releaseCPU();
 				break;
 			}
 
-			if (SensorValue[frontLeft] == 0 && depositionOn == 0)
+			if (SensorValue[frontLeft] == 0)
 			{
 				hogCPU();
 				move_back(moveTime);
 				move_right(300);
-				boundary_count += 1;
 				releaseCPU();
+				boundary_count += 1;
 			}
-			if (SensorValue[frontRight] == 0 && depositionOn == 0)
+			if (SensorValue[frontRight] == 0)
 			{
 				hogCPU();
 				move_back(moveTime);
 				move_left(300);
-				boundary_count += 1;
 				releaseCPU();
+				boundary_count += 1;
 			}
-			if (SensorValue[backLeft] == 0 && depositionOn == 0)
+			if (SensorValue[backLeft] == 0)
 			{
 				hogCPU();
 				move_forward(moveTime);
 				move_right(300);
-				boundary_count += 1;
 				releaseCPU();
+				boundary_count += 1;
 			}
-			if (SensorValue[backRight] == 0 && depositionOn == 0)
+			if (SensorValue[backRight] == 0 )
 			{
 				hogCPU();
 				move_forward(moveTime);
 				move_left(300);
-				boundary_count += 1;
 				releaseCPU();
+				boundary_count += 1;
 			}
 		}
 	}
@@ -742,7 +741,8 @@ task ball_deposition()
 		}
 		hogCPU();
 		clearTimer(T4);
-		while (time1(T4)<2000){
+		stopMC();
+		while (time1(T4)<1000){
 			motor[collectionMotor] = -127;
 		}
 		motor[collectionMotor] = 0;
@@ -750,7 +750,7 @@ task ball_deposition()
 		orientSouth();
 		// then move back till short sensor gives a particular value
 		// disable line detection
-		int delivery_counter = 0;
+		int delivery_counter = 1;
 		while (true)
 		{
 			int back_dist = get_distanceB();
@@ -781,10 +781,13 @@ task ball_deposition()
 				move_back(timez);
 				orientSouth();
 			}
-			if (delivery_counter % 200 == 0) orientSouth();
+			if (delivery_counter % 200 == 0) {
+
+				orientSouth();
+			}
 			move_back(10);
 			delivery_counter++;
-		}		
+		}
 		releaseCPU();
 	}
 }
@@ -793,9 +796,12 @@ task main()
 {
 
 		startTask(line_detection);
-		 startTask(ball_deposition);
-		//  clockwise_circular_search_right(12000);
-		 move_forward(FIRST_MOVE_FORWARD_DURATION);
+		startTask(ball_deposition);
+
+
+		move_forward(FIRST_MOVE_FORWARD_DURATION);
+
+
 
 	while (true)
 	{
@@ -814,6 +820,6 @@ task main()
 		}
 
 
-		
+
 	}
 }

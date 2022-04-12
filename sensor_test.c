@@ -32,6 +32,14 @@ int depositionOn = 0;
 int startRight = 0;
 int _sensorDetect;
 
+
+int distanceL = 0;
+int distanceR = 0;
+int distanceT = 0;
+int distanceB = 0;
+int encoderVal = 0;
+
+
 float volt = 0;
 void orientNorth();
 void orientSouth();
@@ -789,26 +797,38 @@ task ball_deposition()
 task main()
 {
 
-		startTask(line_detection);
-		 startTask(ball_deposition);
-		//  clockwise_circular_search_right(12000);
-		 move_forward(FIRST_MOVE_FORWARD_DURATION);
+
+		// startTask(line_detection);
+		//  startTask(ball_deposition);
+		// //  clockwise_circular_search_right(12000);
+		//  move_forward(FIRST_MOVE_FORWARD_DURATION);
 
 	while (true)
 	{
 
-		for (int southCount = 0; southCount<2; southCount++){
-			orientSouth();
-			move_forward(2000);
-			clockwise_circular_search_right(4000);
 
-		}
+		distanceL = get_distanceL();
+		distanceR = get_distanceR();
+		distanceT = get_distanceTL();
+		distanceB = get_distanceB();
+		encoderVal = SensorValue[encoder];
 
-		for (int northCount = 0; northCount<2; northCount++){
-			orientNorth();
-			move_forward(2000);
-			clockwise_circular_search_right(4000);
-		}
+
+
+		// for (int southCount = 0; southCount<2; southCount++){
+		// 	orientSouth();
+		// 	move_forward(2000);
+		// 	clockwise_circular_search_right(4000);
+
+		// }
+
+		// for (int northCount = 0; northCount<2; northCount++){
+		// 	orientNorth();
+		// 	move_forward(2000);
+		// 	clockwise_circular_search_right(4000);
+		// }
+
+
 
 
 
